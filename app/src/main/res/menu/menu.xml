@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+
+    <item
+        android:id="@+id/menu_products"
+        android:icon="@drawable/icon_search"
+        android:title="products"
+        app:cnb_backgroundColor="#763BFF"
+        app:cnb_iconColor="#000000"
+        app:cnb_textColor="#000000"
+
+
+        />
+    <item
+        android:id="@+id/menu_upload"
+        android:title="upload"
+        android:icon="@drawable/ic_baseline_upload_24"
+        app:cnb_backgroundColor="#E19F32"
+        app:cnb_iconColor="#000000"
+        app:cnb_textColor="#000000"
+
+        />
+
+
+    <item
+        android:id="@+id/menu_cart"
+        android:title="cart"
+        android:icon="@drawable/ic_baseline_shopping_cart_24"
+        app:cnb_backgroundColor="#B73A3A"
+        app:cnb_iconColor="#000000"
+        app:cnb_textColor="#000000" />
+
+    <item
+        android:id="@+id/menu_accSettings"
+        android:icon="@drawable/icon_person"
+        android:title="account"
+        app:cnb_backgroundColor="#673AB7"
+        app:cnb_iconColor="#000000"
+        app:cnb_textColor="#000000" />
+
+    <item
+        android:id="@+id/menu_about"
+        android:title="about"
+        android:icon="@drawable/ic_baseline_info_24"
+        app:cnb_backgroundColor="#AF9F90"
+        app:cnb_iconColor="#000000"
+        app:cnb_textColor="#000000" />
+</menu>
+
+

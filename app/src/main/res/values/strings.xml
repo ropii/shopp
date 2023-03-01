@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">shop</string>
+    <string name="spinner_title_mm">\"mm\"</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- to toggle the open close button of the navigation drawer -->
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
+
+</resources>

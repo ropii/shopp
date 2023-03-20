@@ -10,7 +10,7 @@ import android.widget.VideoView;
 import com.example.shop.R;
 import com.example.shop.archives.BasicActivity;
 
-public class homeActivity extends BasicActivity implements View.OnClickListener {
+public class HomeActivity extends BasicActivity implements View.OnClickListener {
 
     ImageView btn_start;
     VideoView videoView;

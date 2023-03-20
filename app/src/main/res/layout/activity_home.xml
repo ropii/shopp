@@ -7,7 +7,7 @@
     android:layout_gravity="center"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".activities.homeActivity">
+    tools:context=".activities.HomeActivity">
 
 <VideoView
     android:layout_width="match_parent"

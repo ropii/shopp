@@ -11,7 +11,7 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/slideViewPager"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="550dp"
         android:layout_gravity="center"
         tools:ignore="SpeakableTextPresentCheck"/>
 

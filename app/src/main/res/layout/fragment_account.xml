@@ -22,7 +22,7 @@
             android:layout_gravity="center"
             android:textColor="#FBEAEB"
             android:fontFamily="@font/two"
-            android:text="Settings"
+            android:text="Account"
             android:layout_marginRight="20dp"
             android:textSize="50dp" />
 
@@ -31,7 +31,7 @@
             android:layout_height="55dp"
             android:id="@+id/iv_gear"
             android:layout_gravity="center"
-            android:src="@drawable/ic_baseline_settings_24"
+            android:src="@drawable/ic_baseline_person_24"
             />
     </LinearLayout>
 

@@ -9,22 +9,27 @@
     tools:ignore="HardcodedText">
 
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="match_parent">
 
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
-        >
-
+        </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/chipNavBar"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+            android:background="@drawable/gradient_red" />
 
         <com.ismaeldivita.chipnavigation.ChipNavigationBar
-
             android:id="@+id/chipNavBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,11 +39,9 @@
             app:cnb_unselectedColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            />
-
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <!-- this the navigation view which draws and shows the navigation drawer -->

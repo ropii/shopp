@@ -12,9 +12,7 @@
 
 
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="25dp"/>
+
     <ListView
         android:layout_width="350dp"
         android:layout_height="wrap_content"
@@ -23,9 +21,7 @@
         android:dividerHeight="3dp"
         >
     </ListView>
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="78dp"/>
+
 
 
 </LinearLayout>

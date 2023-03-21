@@ -2,8 +2,13 @@ package com.example.shop.fragments;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -153,6 +158,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         TextView tv_name = dialog_product.findViewById(R.id.tv_name);
         ImageView product_img = dialog_product.findViewById(R.id.iv_product);
         Button btn_productDialog = dialog_product.findViewById(R.id.btn_productDialog);
+        Button btn_contact = dialog_product.findViewById(R.id.btn_contact);
         tv_price.setText(selectedProductInListView.getPrice()+"$");
         tv_name.setText(selectedProductInListView.getName());
         if (selectedProductInListView.getDescription().equals("")){
@@ -166,9 +172,14 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         dialog_product.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         if (Functions.generalConnectedPerson==null){
             btn_productDialog.setVisibility(View.GONE);
+            btn_contact.setVisibility(View.GONE);
         }
         else if (Functions.generalConnectedPerson.getEmail().equals(selectedProductInListView.getUploader_email())){
+            btn_contact.setVisibility(View.GONE);
             btn_productDialog.setText("Edit");
+            Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_edit_24);
+            btn_productDialog.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
+
             btn_productDialog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -243,7 +254,25 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             });
         }
         else {
+            btn_contact.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_SENDTO);
+                        intent.setData(Uri.parse("mailto:"));
+                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{selectedProductInListView.getUploader_email()});
+                        intent.putExtra(Intent.EXTRA_SUBJECT, "SHOP, " +selectedProductInListView.getName());
+                        intent.putExtra(Intent.EXTRA_TEXT, "Hi, I'm interested in a product that you have uploaded - " + selectedProductInListView.getName() + ".");
+                        startActivity(intent);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(getContext(), "No email app found on your device", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
             btn_productDialog.setText("ADD TO CART");
+            Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_add_shopping_cart_24);
+            btn_productDialog.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
             btn_productDialog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

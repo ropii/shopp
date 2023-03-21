@@ -65,6 +65,14 @@
         android:layout_height="wrap_content"
 
         />
+    <Button
+        android:id="@+id/btn_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contact"
+        android:drawableRight="@drawable/ic_baseline_email_24"
+        android:background="@drawable/rounded_button"
+        android:layout_marginTop="13dp" />
 
 
 

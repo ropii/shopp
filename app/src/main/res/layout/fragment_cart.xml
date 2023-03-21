@@ -12,9 +12,18 @@
 
 
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="25dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:text="CART IS EMPTY"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="50dp"
+        android:id="@+id/tv_cartIsEmpty"
+        android:layout_height="wrap_content"/>
+
+
     <ListView
         android:layout_width="350dp"
         android:layout_height="wrap_content"
@@ -22,9 +31,14 @@
         android:layout_margin="10dp"
         android:dividerHeight="3dp"
         />
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="78dp"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/ic_baseline_price_check_24"
+        android:layout_margin="16dp" />
+
 
 
 </LinearLayout>

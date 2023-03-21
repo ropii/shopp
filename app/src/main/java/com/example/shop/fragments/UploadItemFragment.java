@@ -323,9 +323,9 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
     // הפעולה יוצרת מוצר באמת לקלט ומחזירה אותו
     private Product createProduct(String str_description, String str_name, String str_category, String str_price, String productId, String imgUrl) {
         if (str_description.equals("")) {
-            return new Product(str_name, str_category, imgUrl, Integer.parseInt(str_price), productId, Functions.generalConnectedPerson.getEmail());
+            return new Product(str_name.trim(), str_category.trim(), imgUrl, Integer.parseInt(str_price), productId, Functions.generalConnectedPerson.getEmail());
         }
-        return new Product(str_name, str_category, imgUrl, Integer.parseInt(str_price), productId, str_description, Functions.generalConnectedPerson.getEmail());
+        return new Product(str_name.trim(), str_category.trim(), imgUrl, Integer.parseInt(str_price), productId, str_description, Functions.generalConnectedPerson.getEmail());
     }
 
     @Override

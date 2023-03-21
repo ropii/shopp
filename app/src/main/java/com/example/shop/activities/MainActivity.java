@@ -166,7 +166,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
 
         }
         if (view == btn_confirm) { // when the user want to search a product based on the filters
-            String price = et_priceLimit.getText().toString();
+            String price = et_priceLimit.getText().toString().trim();
             if (price.length() <= 6) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

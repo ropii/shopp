@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity"
+    android:background="#D5454141"
     tools:ignore="HardcodedText">
 
 
@@ -17,6 +18,10 @@
             android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -27,7 +32,7 @@
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/chipNavBar"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-            android:background="@drawable/gradient_red" />
+            android:background="@drawable/backgorund_upload" />
 
         <com.ismaeldivita.chipnavigation.ChipNavigationBar
             android:id="@+id/chipNavBar"

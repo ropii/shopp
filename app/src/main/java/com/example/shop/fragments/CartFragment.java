@@ -142,6 +142,9 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
                         if (cartAl.size() == 0) {
                             tv_cartIsEmpty.setVisibility(View.VISIBLE);
                         }
+                        else {
+                            tv_cartIsEmpty.setVisibility(View.GONE);
+                        }
 
                     }
                 });

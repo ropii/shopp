@@ -36,7 +36,7 @@ public class CartAdapter extends ArrayAdapter<Product> implements AbsListView.On
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = ((Activity)context).getLayoutInflater();
-        View view = layoutInflater.inflate(R.layout.activity_list_view_cart_layout,parent,false);
+        View view = layoutInflater.inflate(R.layout.activity_list_view_row_layout,parent,false);
 
         TextView tvName = view.findViewById(R.id.tvName);
         TextView tvPrice = view.findViewById(R.id.tvPrice);

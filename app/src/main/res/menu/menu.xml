@@ -9,7 +9,7 @@
         android:id="@+id/menu_products"
         android:icon="@drawable/icon_search"
         android:title="products"
-        app:cnb_backgroundColor="#763BFF"
+        app:cnb_backgroundColor="#EAEA70"
         app:cnb_iconColor="#000000"
         app:cnb_textColor="#000000"
 

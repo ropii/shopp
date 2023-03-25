@@ -106,5 +106,6 @@
             android:fontFamily="@font/six"
             android:text="history"
             android:textColor="#26205B" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

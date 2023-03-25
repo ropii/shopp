@@ -3,13 +3,16 @@ package com.example.shop.fragments;
 import static android.app.Activity.RESULT_OK;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -23,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +35,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +71,7 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     private static final int MY_GALLERY_PERMISSION_CODE = 123;
 
-    private ImageButton ib_upload, ib_camera, ib_gallery;
+    private ImageButton ib_upload;
     private EditText ed_name, ed_category, ed_price, ed_description;
     private ImageView iv_img;
     private Bitmap bitM_upload = null;
@@ -105,14 +110,76 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
         ed_price = view.findViewById(R.id.ed_price);
         ed_description = view.findViewById(R.id.ed_description);
         ib_upload = view.findViewById(R.id.ib_upload);
-        ib_camera = view.findViewById(R.id.ib_camera);
-        ib_gallery = view.findViewById(R.id.ib_gallery);
         iv_img = view.findViewById(R.id.iv_img);
         tv_upload = view.findViewById(R.id.tv_upload);
+        iv_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create a view for the gallery option
+                LinearLayout galleryView = new LinearLayout(getContext());
+                galleryView.setOrientation(LinearLayout.HORIZONTAL);
+                galleryView.setGravity(Gravity.CENTER_VERTICAL);
+                galleryView.setPadding(16, 16, 16, 16);
+                ImageView galleryIcon = new ImageView(getContext());
+                galleryIcon.setImageResource(R.drawable.icon_gallery);
+                galleryView.addView(galleryIcon);
+                TextView galleryText = new TextView(getContext());
+                galleryText.setText("Gallery");
+                galleryText.setTextSize(18);
+                galleryView.addView(galleryText);
+
+                // Create a view for the camera option
+                LinearLayout cameraView = new LinearLayout(getContext());
+                cameraView.setOrientation(LinearLayout.HORIZONTAL);
+                cameraView.setGravity(Gravity.CENTER_VERTICAL);
+                cameraView.setPadding(16, 16, 16, 16);
+                ImageView cameraIcon = new ImageView(getContext());
+                cameraIcon.setImageResource(R.drawable.icon_camera);
+                cameraView.addView(cameraIcon);
+                TextView cameraText = new TextView(getContext());
+                cameraText.setText("Camera");
+                cameraText.setTextSize(18);
+                cameraView.addView(cameraText);
+
+                // Create an AlertDialog with two options: Gallery and Camera
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Select Image");
+                builder.setNegativeButton("Cancel", null);
+                builder.setView(galleryView);
+                builder.setView(cameraView);
+                final AlertDialog dialog = builder.create();
+
+                // Set the click listeners for the custom views
+                galleryView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        selectImageFromGallery();
+                    }
+                });
+
+                cameraView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        selectImageFromCamera();
+                    }
+                });
+
+                // Add both views to the dialog
+                LinearLayout optionsLayout = new LinearLayout(getContext());
+                optionsLayout.setOrientation(LinearLayout.VERTICAL);
+                optionsLayout.addView(galleryView);
+                optionsLayout.addView(cameraView);
+                dialog.setView(optionsLayout);
+
+                dialog.show();
+            }
+        });
+
+
 
         ib_upload.setOnClickListener(this);
-        ib_camera.setOnClickListener(this);
-        ib_gallery.setOnClickListener(this);
         iv_cloud = view.findViewById(R.id.iv_cloud);
         textView_upload = view.findViewById(R.id.textView_upload);
 
@@ -128,14 +195,6 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-        if (view == ib_camera) {
-            selectImageFromCamera();
-
-
-        }
-        if (view == ib_gallery) {
-            selectImageFromGallery();
-        }
         if (view == ib_upload) {
             String str_name = ed_name.getText().toString();
             String str_category = ed_category.getText().toString();

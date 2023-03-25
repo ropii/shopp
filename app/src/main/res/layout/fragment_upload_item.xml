@@ -36,108 +36,133 @@
             android:src="@drawable/ic_baseline_cloud_upload_24" />
     </LinearLayout>
 
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/linearLayout2"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
         android:gravity="center"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toTopOf="parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="5dp"
+                android:elevation="10dp"
+                app:cardBackgroundColor="#00000000"
+                app:cardCornerRadius="8dp">
+
+                <ImageView
+                    android:id="@+id/iv_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+            </androidx.cardview.widget.CardView>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/ed_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:hint="name"
+                    android:textColor="#000000"
+                    android:textSize="30dp" />
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/ed_category"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center"
+                        android:hint="category"
+                        android:textColor="#000000"
+                        android:textSize="20dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <EditText
+                        android:id="@+id/ed_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:gravity="right"
+                        android:hint="price"
+                        android:inputType="number"
+                        android:textColor="#7C211A"
+                        android:textSize="20dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center">
 
-            <EditText
-                android:id="@+id/ed_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:hint="name" />
 
-            <EditText
-                android:id="@+id/ed_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="price"
-                android:inputType="number" />
         </LinearLayout>
 
-
-        <EditText
-            android:id="@+id/ed_category"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:hint="category" />
-
-        <EditText
-            android:id="@+id/ed_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:hint="description" />
-
-        <GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"
-            android:columnCount="2">
-
-            <ImageButton
-                android:id="@+id/ib_gallery"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/icon_gallery" />
-
-            <ImageButton
-                android:id="@+id/ib_camera"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/icon_camera"
-
-                />
+            android:layout_marginTop="5dp"
+            android:gravity="center">
 
             <TextView
-                android:layout_width="60dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
                 android:gravity="center"
-                android:hint="gallery" />
+                android:text="optional:"
+                android:textColor="#000000"
+                android:textSize="20dp" />
 
-            <TextView
-                android:layout_width="60dp"
+
+            <EditText
+                android:id="@+id/ed_description"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-
-                android:gravity="center"
-                android:hint="camera" />
-
-        </GridLayout>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:elevation="10dp"
-            app:cardBackgroundColor="#00000000"
-            app:cardCornerRadius="8dp">
-
-            <ImageView
-                android:id="@+id/iv_img"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
                 android:layout_gravity="center"
-                android:scaleType="centerCrop" />
-        </androidx.cardview.widget.CardView>
+                android:gravity="center"
+                android:hint="description" />
+
+        </LinearLayout>
 
 
         <ImageButton
@@ -145,7 +170,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="25dp"
             android:background="@drawable/icon_upload"
             android:src="@drawable/icon_upload"
 

@@ -50,7 +50,9 @@ public class Partner extends Person {
 
     }
 
-
+    public void addToOrders(String productId, String buyerEmail){
+        this.orders.put(productId,buyerEmail);
+    }
     public CreditCard getCard() {
         return card;
     }
@@ -71,6 +73,9 @@ public class Partner extends Person {
     }
 
 
+    public void addsToHistory(Product product) {
+        this.history.add(product);
+    }
 
 
     public ArrayList<Product> getItems() {

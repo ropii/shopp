@@ -1,11 +1,19 @@
 package com.example.shop.functions;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.example.shop.objects.Partner;
 import com.example.shop.objects.Person;
 import com.example.shop.objects.CreditCard;
 import com.example.shop.objects.Date;
+import com.example.shop.objects.Product;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -82,10 +90,23 @@ public class Functions {
                 }
             });
         }
-        Functions.generalConnectedPerson = null; // מופיע פה NULL למקרה והמשתמש מתנתק
-
+        else {
+            Functions.generalConnectedPerson = null; // מופיע פה NULL למקרה והמשתמש מתנתק
+        }
     }
-
+    // open the email in order to talk about a product
+    public static void openEmail(Product selectedProduct, Context context){
+        try {
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{selectedProduct.getUploader_email()});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "SHOP, " + selectedProduct.getName());
+            intent.putExtra(Intent.EXTRA_TEXT, "Hi, I'm interested in a product that you have uploaded - " + selectedProduct.getName() + ". \n"+Functions.generalConnectedPerson.getFirstName() +"." );
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, "No email app found on your device", Toast.LENGTH_SHORT).show();
+        }
+    }
     // בדיקת תכנות
     public void test() {
         Date date = new Date(12, 2022);

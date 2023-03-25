@@ -30,7 +30,7 @@
         android:id="@+id/menu_cart"
         android:title="cart"
         android:icon="@drawable/ic_baseline_shopping_cart_24"
-        app:cnb_backgroundColor="#B73A3A"
+        app:cnb_backgroundColor="#BDCFCF"
         app:cnb_iconColor="#000000"
         app:cnb_textColor="#000000" />
 

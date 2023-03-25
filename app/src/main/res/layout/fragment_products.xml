@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:layout_centerHorizontal="true"
     android:layout_gravity="center"
-    android:background="#3F49D0"
+    android:background="@drawable/gradient_product"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".fragments.ProductsFragment">

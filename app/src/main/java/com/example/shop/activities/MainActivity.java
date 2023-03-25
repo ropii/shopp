@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,10 +31,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.shop.functions.Functions;
 import com.example.shop.functions.NetworkChangeReceiver;
 import com.example.shop.functions.NotificationService;
 import com.example.shop.objects.Partner;
@@ -53,16 +56,16 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public class MainActivity extends BasicActivity implements View.OnClickListener {
     public static Person p = null;
     TextView tv;
-    ChipNavigationBar chipNavigationBar;
+    public static ChipNavigationBar chipNavigationBar;
 
     public DrawerLayout drawerLayout;//
     public ActionBarDrawerToggle actionBarDrawerToggle;//
     ImageButton btn_musicOf, btn_musicOn;
     Boolean boolean_music;
     Button btn_confirm, btn_reset;
-    public static String product_name = "";
+    public static String product_name = "",product_category = "";
     public static int product_limit_price = Integer.MAX_VALUE;
-    EditText et_priceLimit, et_productSearch;
+    EditText et_priceLimit, et_productSearch,et_categorySearch;
     Intent serviceIntent;
     NetworkChangeReceiver networkChangeReceiver;
 
@@ -84,6 +87,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         btn_confirm = findViewById(R.id.btn_confirm);
         btn_confirm.setOnClickListener(this);
         et_priceLimit = findViewById(R.id.et_priceLimit);
+        et_categorySearch = findViewById(R.id.et_categorySearch);
         et_productSearch = findViewById(R.id.et_productSearch);
         btn_reset = findViewById(R.id.btn_reset);
         btn_reset.setOnClickListener(this);
@@ -106,17 +110,24 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
             // הפעולה בודקת האם לחצו על בר הניווט ומעבירה פרגמאנט בהתאם לכך
             @Override
             public void onItemSelected(int i) {
+                Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_white, null);
+                Drawable drawable2 = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_account, null);
+                Drawable drawable3 = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_product, null);
 
                 Fragment fragment = null;
                 switch (i) {
                     case R.id.menu_about:
                         fragment = new AboutFragment();
+                        drawerLayout.setBackground(drawable);
                         break;
                     case R.id.menu_products:
                         fragment = new ProductsFragment();
+                        drawerLayout.setBackground(drawable3);
                         break;
                     case R.id.menu_accSettings:
                         fragment = new AccountFragment();
+                        drawerLayout.setBackground(drawable2);
+
                         break;
                     case R.id.menu_cart:
                         if (generalConnectedPerson == null) {
@@ -124,6 +135,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
 
                         } else {
                             fragment = new CartFragment();
+                            drawerLayout.setBackground(drawable);
                         }
                         break;
                     case R.id.menu_upload:
@@ -138,6 +150,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
                             }
                         } else {
                             fragment = new UploadItemFragment();
+                            drawerLayout.setBackground(drawable);
                         }
                         break;
                 }
@@ -157,9 +170,11 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         if (view == btn_reset) { // when the user want to reset and arise the filters
             et_productSearch.setText("");
             et_priceLimit.setText("");
+            et_categorySearch.setText("");
             product_limit_price = Integer.MAX_VALUE;
             product_name = "";
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            product_category="";
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // close the keyboard
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             drawerLayout.close();
             handleFilter();
@@ -171,7 +186,8 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 drawerLayout.close();
-                product_name = et_productSearch.getText().toString();
+                product_name = et_productSearch.getText().toString().trim();
+                product_category = et_categorySearch.getText().toString().trim();
                 if (!price.equals("")) {
                     product_limit_price = Integer.parseInt(price);
                 }
@@ -183,12 +199,6 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
                 et_priceLimit.setError("price must be less than 1M");
                 product_limit_price = Integer.MAX_VALUE;
             }
-        }
-        if (view == btn_musicOn) {
-
-        }
-        if (view == btn_musicOf) {
-
         }
 
     }

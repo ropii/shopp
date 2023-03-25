@@ -7,6 +7,10 @@ import static com.example.shop.functions.Functions.isValidEmailAddress;
 import static com.example.shop.functions.Functions.setPerson;
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -15,22 +19,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.example.shop.adapters.ProductAdapter;
+import com.example.shop.functions.Functions;
 import com.example.shop.objects.CreditCard;
 import com.example.shop.objects.Date;
 import com.example.shop.objects.Partner;
 import com.example.shop.objects.Person;
 import com.example.shop.R;
+import com.example.shop.objects.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -43,12 +54,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Calendar;
 
 
-public class AccountFragment extends Fragment implements View.OnClickListener {
+public class AccountFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
 
 
     private String mParam1;
@@ -66,9 +76,11 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
-    Button btn_signUp_acc, btn_signIn_acc, btn_signOut_acc, btn_AccountSettings_acc;
+    Button btn_signUp_acc, btn_signIn_acc, btn_signOut_acc, btn_AccountSettings_acc,btn_history_acc;
     ImageView iv_gear;
     TextView textView;
+    ProductAdapter productAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +88,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
 
 
     }
@@ -92,9 +103,11 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         btn_signIn_acc = view.findViewById(R.id.btn_signIn_acc);
         btn_signOut_acc = view.findViewById(R.id.btn_signOut_acc);
         btn_AccountSettings_acc = view.findViewById(R.id.btn_AccountSettings_acc);
+        btn_history_acc = view.findViewById(R.id.btn_history_acc);
         iv_gear = view.findViewById(R.id.iv_gear);
         textView = view.findViewById(R.id.textView);
         btn_signUp_acc.setOnClickListener(this);
+        btn_history_acc.setOnClickListener(this);
         btn_signIn_acc.setOnClickListener(this);
         btn_signOut_acc.setOnClickListener(this);
         btn_AccountSettings_acc.setOnClickListener(this);
@@ -105,25 +118,51 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         textView.startAnimation(popInAnimation);
 
 
-
         return view;
     }
 
     @Override
     public void onClick(View view) {
 
-        if (view==btn_signOut_acc){
+        if (view == btn_signOut_acc) {
             openDisconnectDialog();
         }
-        if (view==btn_signIn_acc){
+        if (view == btn_signIn_acc) {
             openSignInDialog();
         }
-        if (view==btn_signUp_acc){
+        if (view == btn_signUp_acc) {
             openSignUpDialog();
         }
-        if (view==btn_AccountSettings_acc){
+        if (view == btn_AccountSettings_acc) {
             openAccInfoDialog();
         }
+        if (view == btn_history_acc){
+            openHistory();
+        }
+    }
+
+    private void openHistory() {
+        Dialog builder = new Dialog(getContext());
+        builder.setContentView(R.layout.dialog_history);
+        builder.setCancelable(true);
+        TextView tv_noHistory = builder.findViewById(R.id.tv_noHistory);
+        ListView lvHistory = builder.findViewById(R.id.lvHistory);
+        if (((Partner)generalConnectedPerson).getHistory().size()==0){
+            tv_noHistory.setVisibility(View.VISIBLE);
+        }
+        else{
+            tv_noHistory.setVisibility(View.GONE);
+        }
+        //create the adapter
+        productAdapter = new ProductAdapter(getContext(), 0, 0, ((Partner)generalConnectedPerson).getHistory());
+        lvHistory.setAdapter(productAdapter);
+        lvHistory.setOnScrollListener(productAdapter);
+        lvHistory.setOnItemClickListener(this);
+
+        builder.create();
+        builder.show();
+
+
     }
 
 
@@ -178,17 +217,17 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         et_email.setEnabled(false);
         et_email.setInputType(InputType.TYPE_NULL);
 
-        if(generalConnectedPerson instanceof Partner){
-            int zip=((Partner)generalConnectedPerson).getZip();
-            et_zip.setText(zip+"");
-            long card_number=((Partner)generalConnectedPerson).getCard().getNumber();
-            et_cardNumber.setText(card_number+"");
-            int cvc=((Partner)generalConnectedPerson).getCard().getCvc();
-            et_cvc.setText(cvc+"");
-            int month=((Partner)generalConnectedPerson).getCard().getValidation().getMonth();
-            spinner_mm.setSelection(month-1);
-            int year=((Partner)generalConnectedPerson).getCard().getValidation().getYear();
-            spinner_yy.setSelection(year-this_year);
+        if (generalConnectedPerson instanceof Partner) {
+            int zip = ((Partner) generalConnectedPerson).getZip();
+            et_zip.setText(zip + "");
+            long card_number = ((Partner) generalConnectedPerson).getCard().getNumber();
+            et_cardNumber.setText(card_number + "");
+            int cvc = ((Partner) generalConnectedPerson).getCard().getCvc();
+            et_cvc.setText(cvc + "");
+            int month = ((Partner) generalConnectedPerson).getCard().getValidation().getMonth();
+            spinner_mm.setSelection(month - 1);
+            int year = ((Partner) generalConnectedPerson).getCard().getValidation().getYear();
+            spinner_yy.setSelection(year - this_year);
         }
 
 
@@ -211,19 +250,19 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                 String str_cvc = et_cvc.getText().toString();
 
                 //check if et is empty
-                if ( str_zip.length()>8) {
+                if (str_zip.length() > 8) {
                     et_zip.setError("zip must be less than 8 digits");
                 }
                 if (str_zip.equals("")) {
                     et_zip.setError("ENTER a ZIP");
                 }
-                if (str_cardNumber.length()!=16) {
+                if (str_cardNumber.length() != 16) {
                     et_cardNumber.setError("credit card must be 16 digits");
                 }
                 if (str_cardNumber.equals("")) {
                     et_cardNumber.setError("ENTER CARD NUMBER");
                 }
-                if (str_cvc.length()!=3) {
+                if (str_cvc.length() != 3) {
                     et_cvc.setError(" CVC must be 3 digits");
                 }
                 if (str_cvc.equals("")) {
@@ -245,7 +284,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                 if (str_password.equals("") || str_password.length() < 6) {
                     et_password.setError("ENTER PASSWORD (6 chars)");
                 }
-                Boolean validInfo = str_password.length() >= 6 && isValidEmailAddress(str_email) && !str_firstName.equals("") && !str_lastName.equals("") && !str_email.equals("") && !str_password.equals("") && !str_zip.equals("") && !str_cardNumber.equals("") && !str_cvc.equals("")&& str_cvc.length()==3&& str_zip.length()<=8 &&str_cardNumber.length()==16;
+                Boolean validInfo = str_password.length() >= 6 && isValidEmailAddress(str_email) && !str_firstName.equals("") && !str_lastName.equals("") && !str_email.equals("") && !str_password.equals("") && !str_zip.equals("") && !str_cardNumber.equals("") && !str_cvc.equals("") && str_cvc.length() == 3 && str_zip.length() <= 8 && str_cardNumber.length() == 16;
                 if (validInfo) {//info is valid
 
                     int int_zip = Integer.parseInt(str_zip);
@@ -309,7 +348,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         builder.create();
         builder.show();
     }
-
 
 
     //הפעולה פותחת דיאלוג המאפשר למשתמש להתנתק
@@ -378,10 +416,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                     et_email.setError("ENTER A VALID EMAIL ");
 
                 }
-                if (str_password.equals("") ||str_password.length()<6) {
+                if (str_password.equals("") || str_password.length() < 6) {
                     et_password.setError("ENTER PASSWORD (6 chars)");
                 }
-                Boolean validInfo = str_password.length()>=6 && isValidEmailAddress(str_email)&& !str_email.equals("") &&  !str_password.equals("");
+                Boolean validInfo = str_password.length() >= 6 && isValidEmailAddress(str_email) && !str_email.equals("") && !str_password.equals("");
                 if (validInfo) {   //info is valid
 
                     //  builder.cancel();
@@ -397,7 +435,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                                         // Sign in success, update UI with the signed-in user's information
                                         Log.d(TAG, "signInWithEmail:success");
                                         FirebaseUser user = mAuth.getCurrentUser();
-                                        Toast.makeText(getActivity(), "logged in.",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "logged in.", Toast.LENGTH_SHORT).show();
                                         setVisibility();
                                         setPerson();
                                         builder.cancel();
@@ -450,8 +488,8 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 String str_firstName = et_firstName.getText().toString();
-                String  str_lastName = et_lastName.getText().toString();
-                String  str_password = et_password.getText().toString();
+                String str_lastName = et_lastName.getText().toString();
+                String str_password = et_password.getText().toString();
                 String str_email = et_email.getText().toString();
 
                 //check if et is empty
@@ -466,14 +504,14 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                     et_email.setError("ENTER A VALID EMAIL ");
 
                 }
-                if (str_password.equals("") ||str_password.length()<6) {
+                if (str_password.equals("") || str_password.length() < 6) {
                     et_password.setError("ENTER PASSWORD (6 chars)");
                 }
-                Boolean validInfo = str_password.length()>=6 && isValidEmailAddress(str_email)&& !str_firstName.equals("") &&  !str_lastName.equals("") &&  !str_email.equals("") &&  !str_password.equals("");
+                Boolean validInfo = str_password.length() >= 6 && isValidEmailAddress(str_email) && !str_firstName.equals("") && !str_lastName.equals("") && !str_email.equals("") && !str_password.equals("");
                 if (validInfo) {   //info is valid
                     setVisibility();
                     Person p = new Person(str_firstName, str_lastName, str_email, str_password);
-                    registerUser(p,builder);
+                    registerUser(p, builder);
                     generalConnectedPerson = p;
 
                 }
@@ -485,7 +523,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         builder.create();
         builder.show();
     }
-
 
 
     // פעולות עזר
@@ -503,7 +540,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(getActivity(), "logged in.",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "logged in.", Toast.LENGTH_SHORT).show();
                             setVisibility();
 
                         } else {
@@ -519,7 +556,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
 
 
     //   שליחת אימייל וסיסמא לפייר-בייס (הרשמה) והוספה לפייר- סטור(אחסון נתונים)
-    public void registerUser(Person p,Dialog builder) {
+    public void registerUser(Person p, Dialog builder) {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -530,7 +567,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
-                    db.collection("users").document(p.getEmail()+"").set(p);          // הוספת הפרטים למשתמש
+                    db.collection("users").document(p.getEmail() + "").set(p);          // הוספת הפרטים למשתמש
                     Toast.makeText(getActivity(), "SIGN UP SUCCESSFULLY", Toast.LENGTH_SHORT).show();
                     setVisibility();
                     builder.cancel();
@@ -547,19 +584,20 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     }
 
     //הפעולה המעדכנת את נראות הכפתורים הקשורים למצב ההתחברות של המשתמש
-    public void  setVisibility(){
-        if (isSignIn()){
+    public void setVisibility() {
+        if (isSignIn()) {
             btn_signUp_acc.setVisibility(View.GONE);
             btn_signIn_acc.setVisibility(View.GONE);
             btn_signOut_acc.setVisibility(View.VISIBLE);
             btn_AccountSettings_acc.setVisibility(View.VISIBLE);
+            btn_history_acc.setVisibility(View.VISIBLE);
 
-        }
-        else{
+        } else {
             btn_signUp_acc.setVisibility(View.VISIBLE);
             btn_signIn_acc.setVisibility(View.VISIBLE);
             btn_signOut_acc.setVisibility(View.GONE);
             btn_AccountSettings_acc.setVisibility(View.GONE);
+            btn_history_acc.setVisibility(View.GONE);
         }
     }
 
@@ -568,6 +606,22 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         super.onResume();
     }
 
+
+    // onItemClick for the history( open email)
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Product selectedProductInListView = productAdapter.getItem(i);
+        try {
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{selectedProductInListView.getUploader_email()});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "SHOP, " + selectedProductInListView.getName());
+            intent.putExtra(Intent.EXTRA_TEXT, "Hi, I bought an item from you - " + selectedProductInListView.getName() + ". \n"+Functions.generalConnectedPerson.getFirstName() +"." );
+            getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), "No email app found on your device", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
 
 

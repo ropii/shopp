@@ -42,6 +42,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -249,6 +250,7 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(getContext(), "Product Uploaded!!", Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
+                Functions.setPerson();
                 ed_name.setText("");
                 ed_category.setText("");
                 ed_price.setText("");
@@ -280,12 +282,18 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     HashMap<String, String> hm = new HashMap<String, String>();
                     hm.put(uuid, downloadUri.toString());
-                    Partner p = (Partner) Functions.generalConnectedPerson;
-                    Product product_created = createProduct(description, name, category, price, uuid, downloadUri.toString());
-                    p.getItems().add(product_created);
-                    db.collection("users").document(p.getEmail()).set(p);
-                    db.collection("products").document(uuid).set(product_created);
-                    Functions.setPerson();
+                    db.collection("users").document(Functions.generalConnectedPerson.getEmail())
+                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    Partner p = documentSnapshot.toObject(Partner.class);
+                                    Product product_created = createProduct(description, name, category, price, uuid, downloadUri.toString());
+                                    p.getItems().add(product_created);
+                                    db.collection("users").document(p.getEmail()).set(p);
+                                    db.collection("products").document(uuid).set(product_created);
+
+                                }
+                            });
 
                 }
             }

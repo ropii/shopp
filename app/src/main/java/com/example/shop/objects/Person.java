@@ -54,6 +54,8 @@ public class Person {
     }
 
 
-
+    public void removeFromCart(Product product) {
+        cart.remove(product);
+        }
 
 }

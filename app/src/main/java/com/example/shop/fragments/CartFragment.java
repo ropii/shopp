@@ -1,10 +1,16 @@
 package com.example.shop.fragments;
 
+import static com.example.shop.activities.MainActivity.chipNavigationBar;
+import static com.example.shop.functions.Functions.generalConnectedPerson;
+
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -21,14 +27,23 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.example.shop.adapters.CartAdapter;
+import com.example.shop.adapters.ProductAdapter;
 import com.example.shop.functions.Functions;
+import com.example.shop.objects.Partner;
+import com.example.shop.objects.Person;
 import com.example.shop.objects.Product;
 import com.example.shop.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -38,9 +53,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.ExecutionException;
 
 
-public class CartFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class CartFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -49,7 +65,8 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
     ArrayList<Product> cartAl = new ArrayList<>();
     CartAdapter cartAdapter;
     TextView tv_cartIsEmpty;
-
+    FloatingActionButton btn_buy;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String mParam1;
     private String mParam2;
 
@@ -82,6 +99,8 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
 
         lvProductCart = view.findViewById(R.id.lvProductCart);
         tv_cartIsEmpty = view.findViewById(R.id.tv_cartIsEmpty);
+        btn_buy = view.findViewById(R.id.btn_buy);
+        btn_buy.setOnClickListener(this);
         createArLs();
         Log.d("fragmentStart", "on create view");
         lvProductCart.setOnItemClickListener(this);
@@ -101,7 +120,6 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Loading...");
         progressDialog.show();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("products")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -141,8 +159,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
 
                         if (cartAl.size() == 0) {
                             tv_cartIsEmpty.setVisibility(View.VISIBLE);
-                        }
-                        else {
+                        } else {
                             tv_cartIsEmpty.setVisibility(View.GONE);
                         }
 
@@ -172,16 +189,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         btn_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse("mailto:"));
-                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{selectedProductInListView.getUploader_email()});
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "SHOP, " + selectedProductInListView.getName());
-                    intent.putExtra(Intent.EXTRA_TEXT, "Hi, I'm interested in a product that you have uploaded - " + selectedProductInListView.getName() + ".");
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(getContext(), "No email app found on your device", Toast.LENGTH_SHORT).show();
-                }
+                Functions.openEmail(selectedProductInListView, getContext());
             }
         });
 
@@ -213,4 +221,90 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         dialog_product.create();
         dialog_product.show();
     }
+
+
+    @Override
+    public void onClick(View view) {
+        if (view == btn_buy) {
+            if (cartAl.size() != 0) {
+                ProgressDialog progressDialog = new ProgressDialog(getContext());
+                progressDialog.setCancelable(false);
+                progressDialog.setTitle("Loading...");
+                progressDialog.show();
+
+                db.collection("products")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Product temp = document.toObject(Product.class);
+                                        checkForMatchingProduct(temp);
+                                    }
+                                    cartAl.clear();
+                                    Functions.generalConnectedPerson.setCart(cartAl);
+                                    db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(Functions.generalConnectedPerson);
+                                    createArLs();
+                                    progressDialog.dismiss();
+/*
+                                    // move to product fragment so he could buy more
+                                    chipNavigationBar.setItemSelected(R.id.menu_products, true);
+*/
+                                    // the thanks dialog:
+                                    thanks();
+                                }
+                            }
+                        });
+            } else {
+                Toast.makeText(getContext(), "cart is empty", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    }
+
+    private void checkForMatchingProduct(Product temp) {
+        for (int i = 0; i < cartAl.size(); i++) {
+            if (cartAl.get(i).isEquals(temp)) {
+                db.collection("products").document(temp.getProductId()).delete();
+                ((Partner) Functions.generalConnectedPerson).addsToHistory(temp);
+/*   add the order
+                db.collection("users").document(temp.getUploader_email())
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                Partner productUploader = documentSnapshot.toObject(Partner.class);
+                                productUploader.addToOrders(temp.getProductId(), Functions.generalConnectedPerson.getEmail());
+                                db.collection("users").document(temp.getUploader_email()).set(productUploader);
+
+                            }
+                        });
+*/
+            }
+        }
+    }
+    // open a thank you dialog after buying
+    private void thanks() {
+        Dialog builder = new Dialog(getContext());
+        builder.setContentView(R.layout.dialog_after_buying);
+        builder.setCancelable(true);
+        VideoView videoView = builder.findViewById(R.id.videoView_afterBuying);
+        Uri uri = Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + R.raw.thanks_video);
+        videoView.setVideoURI(uri);
+        videoView.start();
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+            }
+        });
+
+        builder.create();
+        builder.show();
+
+
+    }
+
+
 }
+

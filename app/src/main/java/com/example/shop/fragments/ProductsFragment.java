@@ -112,8 +112,10 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Product temp = document.toObject(Product.class);
 
-                                // Filter products by price and name
-                                if (MainActivity.product_limit_price>= temp.getPrice() && (MainActivity.product_name.equals("") ||MainActivity.product_name.equals(temp.getName()))){
+                                // Filter products by price , category and name
+                                if (MainActivity.product_limit_price>= temp.getPrice() && //price
+                                        (MainActivity.product_name.equals("") ||MainActivity.product_name.equals(temp.getName())) && // name
+                                        (MainActivity.product_category.equals("") ||MainActivity.product_category.equals(temp.getCategory()))){ // category
                                     productArrayList.add(temp);
                                 }
                             }
@@ -257,16 +259,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             btn_contact.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_SENDTO);
-                        intent.setData(Uri.parse("mailto:"));
-                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{selectedProductInListView.getUploader_email()});
-                        intent.putExtra(Intent.EXTRA_SUBJECT, "SHOP, " +selectedProductInListView.getName());
-                        intent.putExtra(Intent.EXTRA_TEXT, "Hi, I'm interested in a product that you have uploaded - " + selectedProductInListView.getName() + ".");
-                        startActivity(intent);
-                    } catch (ActivityNotFoundException e) {
-                        Toast.makeText(getContext(), "No email app found on your device", Toast.LENGTH_SHORT).show();
-                    }
+                    Functions.openEmail(selectedProductInListView, getContext());
                 }
             });
 

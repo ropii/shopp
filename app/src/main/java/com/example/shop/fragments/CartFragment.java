@@ -100,6 +100,13 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         lvProductCart = view.findViewById(R.id.lvProductCart);
         tv_cartIsEmpty = view.findViewById(R.id.tv_cartIsEmpty);
         btn_buy = view.findViewById(R.id.btn_buy);
+        if(generalConnectedPerson instanceof Partner){
+            btn_buy.setVisibility(View.VISIBLE);
+        }
+        else {
+            btn_buy.setVisibility(View.GONE);
+
+        }
         btn_buy.setOnClickListener(this);
         createArLs();
         Log.d("fragmentStart", "on create view");

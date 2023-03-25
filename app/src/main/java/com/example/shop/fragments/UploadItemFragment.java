@@ -348,6 +348,7 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
                                     Partner p = documentSnapshot.toObject(Partner.class);
                                     Product product_created = createProduct(description, name, category, price, uuid, downloadUri.toString());
                                     p.getItems().add(product_created);
+                                    AccountFragment.uploadedProducts.add(product_created);
                                     db.collection("users").document(p.getEmail()).set(p);
                                     db.collection("products").document(uuid).set(product_created);
 

@@ -128,7 +128,7 @@
             android:text="Reset"
             android:textColor="@android:color/black" />
 
-        <ImageButton
+        <!--<ImageButton
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:id="@+id/btn_musicOn"
@@ -137,7 +137,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:id="@+id/btn_musicOf"
-            android:src="@drawable/ic_baseline_music_off_24"/>
+            android:src="@drawable/ic_baseline_music_off_24"/>-->
 
     </LinearLayout>
 

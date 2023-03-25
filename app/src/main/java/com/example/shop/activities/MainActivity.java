@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -92,12 +93,14 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         btn_reset = findViewById(R.id.btn_reset);
         btn_reset.setOnClickListener(this);
 
+        /*
         btn_musicOf = findViewById(R.id.btn_musicOf);
-        btn_musicOn = findViewById(R.id.btn_musicOn);
+        btn_musicOf = findViewById(R.id.btn_musicOf);
         btn_musicOf.setOnClickListener(this);
         btn_musicOn.setOnClickListener(this);
         btn_musicOf.setVisibility(View.GONE);
-        btn_musicOn.setVisibility(View.GONE);
+        btn_musicOn.setVisibility(View.GONE);*/
+
 
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductsFragment()).commit();

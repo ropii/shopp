@@ -89,6 +89,15 @@
             android:text="info"
             android:textColor="#26205B" />
         <Button
+            android:id="@+id/btn_items_acc"
+            android:layout_width="115dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="#FBEAEB"
+            android:fontFamily="@font/six"
+            android:text="items"
+            android:textColor="#26205B" />
+        <Button
             android:id="@+id/btn_history_acc"
             android:layout_width="115dp"
             android:layout_height="wrap_content"

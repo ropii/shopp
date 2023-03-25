@@ -34,6 +34,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.shop.activities.MainActivity;
 import com.example.shop.adapters.ProductAdapter;
 import com.example.shop.functions.Functions;
 import com.example.shop.objects.CreditCard;
@@ -51,6 +52,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -76,10 +78,11 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         return fragment;
     }
 
-    Button btn_signUp_acc, btn_signIn_acc, btn_signOut_acc, btn_AccountSettings_acc,btn_history_acc;
+    Button btn_signUp_acc, btn_signIn_acc, btn_signOut_acc, btn_AccountSettings_acc,btn_history_acc,btn_items_acc;
     ImageView iv_gear;
     TextView textView;
     ProductAdapter productAdapter;
+    public static ArrayList<Product> uploadedProducts = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,12 +106,14 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         btn_signIn_acc = view.findViewById(R.id.btn_signIn_acc);
         btn_signOut_acc = view.findViewById(R.id.btn_signOut_acc);
         btn_AccountSettings_acc = view.findViewById(R.id.btn_AccountSettings_acc);
+        btn_items_acc = view.findViewById(R.id.btn_items_acc);
         btn_history_acc = view.findViewById(R.id.btn_history_acc);
         iv_gear = view.findViewById(R.id.iv_gear);
         textView = view.findViewById(R.id.textView);
         btn_signUp_acc.setOnClickListener(this);
         btn_history_acc.setOnClickListener(this);
         btn_signIn_acc.setOnClickListener(this);
+        btn_items_acc.setOnClickListener(this);
         btn_signOut_acc.setOnClickListener(this);
         btn_AccountSettings_acc.setOnClickListener(this);
         setVisibility();
@@ -139,6 +144,148 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         if (view == btn_history_acc){
             openHistory();
         }
+        if (view == btn_items_acc){
+            openUploadedProducts();
+        }
+    }
+
+    private void openUploadedProducts() {
+        Dialog uploadedProductsDialog = new Dialog(getContext());
+        uploadedProductsDialog.setContentView(R.layout.dialog_history);
+        uploadedProductsDialog.setCancelable(true);
+        TextView tv_noHistory = uploadedProductsDialog.findViewById(R.id.tv_noHistory);
+        ListView lvHistory = uploadedProductsDialog.findViewById(R.id.lvHistory);
+        if (uploadedProducts.size()==0){
+            tv_noHistory.setText("No \nItems");
+            tv_noHistory.setVisibility(View.VISIBLE);
+        }
+        else{
+            tv_noHistory.setVisibility(View.GONE);
+        }
+        //create the adapter
+        productAdapter = new ProductAdapter(getContext(), 0, 0, uploadedProducts);
+        lvHistory.setAdapter(productAdapter);
+        lvHistory.setOnScrollListener(productAdapter);
+        lvHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Product selectedProductInListView = productAdapter.getItem(position);
+                Dialog dialog_product = new Dialog(getContext());
+                dialog_product.setContentView(R.layout.dialog_product);
+                dialog_product.setCancelable(true);
+                TextView tv_price = dialog_product.findViewById(R.id.tv_price);
+                TextView tv_description = dialog_product.findViewById(R.id.tv_description);
+                TextView tv_category = dialog_product.findViewById(R.id.tv_category);
+                TextView tv_name = dialog_product.findViewById(R.id.tv_name);
+                ImageView product_img = dialog_product.findViewById(R.id.iv_product);
+                Button btn_productDialog = dialog_product.findViewById(R.id.btn_productDialog);
+                Button btn_contact = dialog_product.findViewById(R.id.btn_contact);
+                tv_price.setText(selectedProductInListView.getPrice() + "$");
+                tv_name.setText(selectedProductInListView.getName());
+                if (selectedProductInListView.getDescription().equals("")) {
+                    tv_description.setVisibility(View.GONE);
+                } else {
+                    tv_description.setText(selectedProductInListView.getDescription());
+                }
+                tv_category.setText(selectedProductInListView.getCategory());
+                tv_name.setText(selectedProductInListView.getName());
+                Glide.with(getContext()).load(selectedProductInListView.getImgUrl()).into(product_img);
+                dialog_product.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+                if (Functions.generalConnectedPerson == null) {
+                    btn_productDialog.setVisibility(View.GONE);
+                    btn_contact.setVisibility(View.GONE);
+                } else if (Functions.generalConnectedPerson.getEmail().equals(selectedProductInListView.getUploader_email())) {
+                    btn_contact.setVisibility(View.GONE);
+                    btn_productDialog.setText("Edit");
+                    Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_edit_24);
+                    btn_productDialog.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
+
+                    btn_productDialog.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Dialog dialog_product_edit = new Dialog(getContext());
+                            dialog_product_edit.setContentView(R.layout.dialog_product_edit);
+                            dialog_product_edit.setCancelable(true);
+                            dialog_product_edit.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation2;
+                            EditText et_category = dialog_product_edit.findViewById(R.id.et_category);
+                            TextView tv_name = dialog_product_edit.findViewById(R.id.tv_name);
+                            EditText et_description = dialog_product_edit.findViewById(R.id.et_description);
+                            EditText et_price = dialog_product_edit.findViewById(R.id.et_price);
+                            Button btn_save = dialog_product_edit.findViewById(R.id.btn_save);
+                            Button btn_remove = dialog_product_edit.findViewById(R.id.btn_remove);
+                            ImageView iv_product = dialog_product_edit.findViewById(R.id.iv_product);
+                            tv_name.setText(selectedProductInListView.getName());
+                            et_category.setText(selectedProductInListView.getCategory());
+                            et_description.setText(selectedProductInListView.getDescription());
+                            et_price.setText(selectedProductInListView.getPrice() + "");
+                            Glide.with(getContext()).load(selectedProductInListView.getImgUrl()).into(iv_product);
+                            btn_remove.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    productAdapter.remove(selectedProductInListView);
+                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                    db.collection("products").document(selectedProductInListView.getProductId()).delete();
+                                    Partner p = (Partner) Functions.generalConnectedPerson;
+                                    p.removeItem(selectedProductInListView);
+                                    db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(p);
+                                    Functions.generalConnectedPerson = p;
+                                    dialog_product_edit.dismiss();
+
+                                }
+                            });
+
+                            btn_save.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (et_category.getText().toString().equals("") || et_price.getText().toString().equals("") || et_price.getText().toString().length() >= 7) {
+                                        Toast.makeText(getContext(), "Insert Valid Data", Toast.LENGTH_SHORT).show();
+
+                                    } else {
+                                        String category = et_category.getText().toString();
+                                        String description = et_description.getText().toString() + "";
+                                        int price = Integer.parseInt(et_price.getText().toString());
+                                        String imgId = selectedProductInListView.getImgUrl();
+                                        String productId = selectedProductInListView.getProductId();
+                                        String uploader_email = selectedProductInListView.getUploader_email();
+
+                                        Product editedProduct = new Product(selectedProductInListView.getName(), category, imgId, price, productId, description, uploader_email);
+                                        productAdapter.remove(selectedProductInListView);
+                                        productAdapter.insert(editedProduct, position);
+                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                        db.collection("products").document(selectedProductInListView.getProductId()).set(editedProduct);
+                                        Partner p = (Partner) Functions.generalConnectedPerson;
+                                        p.removeItem(selectedProductInListView);
+                                        p.getItems().add(editedProduct);
+                                        db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(p);
+                                        Functions.generalConnectedPerson = p;
+                                        dialog_product_edit.dismiss();
+                                    }
+                                }
+                            });
+
+
+                            dialog_product.dismiss();
+
+                            dialog_product_edit.create();
+                            dialog_product_edit.show();
+
+                        }
+                    });
+                }
+                dialog_product.create();
+                dialog_product.show();
+
+
+
+
+            }
+        });
+
+        uploadedProductsDialog.create();
+        uploadedProductsDialog.show();
+
+
     }
 
     private void openHistory() {
@@ -591,6 +738,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
             btn_signOut_acc.setVisibility(View.VISIBLE);
             btn_AccountSettings_acc.setVisibility(View.VISIBLE);
             btn_history_acc.setVisibility(View.VISIBLE);
+            btn_items_acc.setVisibility(View.VISIBLE);
 
         } else {
             btn_signUp_acc.setVisibility(View.VISIBLE);
@@ -598,6 +746,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
             btn_signOut_acc.setVisibility(View.GONE);
             btn_AccountSettings_acc.setVisibility(View.GONE);
             btn_history_acc.setVisibility(View.GONE);
+            btn_items_acc.setVisibility(View.GONE);
         }
     }
 

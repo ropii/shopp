@@ -57,7 +57,6 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
     ProductAdapter productAdapter;
 
 
-
     public ProductsFragment() {
     }
 
@@ -91,13 +90,12 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         Log.d("fragmentStart", "on create view");
 
 
-
         return view;
     }
 
 
     // Create the product list from data in Firestore
-    public void createArLs(){
+    public void createArLs() {
         ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Loading...");
@@ -109,14 +107,27 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            AccountFragment.uploadedProducts.clear(); // to be clear from doubles
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Product temp = document.toObject(Product.class);
 
                                 // Filter products by price , category and name
-                                if (MainActivity.product_limit_price>= temp.getPrice() && //price
-                                        (MainActivity.product_name.equals("") ||MainActivity.product_name.equals(temp.getName())) && // name
-                                        (MainActivity.product_category.equals("") ||MainActivity.product_category.equals(temp.getCategory()))){ // category
-                                    productArrayList.add(temp);
+                                if (Functions.generalConnectedPerson instanceof Partner) {
+                                    if (Functions.generalConnectedPerson.getEmail().equals(temp.getUploader_email())){
+                                        AccountFragment.uploadedProducts.add(temp);
+                                    }
+                                    else if (MainActivity.product_limit_price >= temp.getPrice() && //price
+                                            (MainActivity.product_name.equals("") || MainActivity.product_name.equals(temp.getName())) && // name
+                                            (MainActivity.product_category.equals("") || MainActivity.product_category.equals(temp.getCategory())))// category
+                                    {
+                                        productArrayList.add(temp);
+                                    }
+                                } else {
+                                    if (MainActivity.product_limit_price >= temp.getPrice() && //price
+                                            (MainActivity.product_name.equals("") || MainActivity.product_name.equals(temp.getName())) && // name
+                                            (MainActivity.product_category.equals("") || MainActivity.product_category.equals(temp.getCategory()))) { // category
+                                        productArrayList.add(temp);
+                                    }
                                 }
                             }
 
@@ -161,22 +172,21 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         ImageView product_img = dialog_product.findViewById(R.id.iv_product);
         Button btn_productDialog = dialog_product.findViewById(R.id.btn_productDialog);
         Button btn_contact = dialog_product.findViewById(R.id.btn_contact);
-        tv_price.setText(selectedProductInListView.getPrice()+"$");
+        tv_price.setText(selectedProductInListView.getPrice() + "$");
         tv_name.setText(selectedProductInListView.getName());
-        if (selectedProductInListView.getDescription().equals("")){
+        if (selectedProductInListView.getDescription().equals("")) {
             tv_description.setVisibility(View.GONE);
+        } else {
+            tv_description.setText(selectedProductInListView.getDescription());
         }
-        else{
-        tv_description.setText(selectedProductInListView.getDescription());}
         tv_category.setText(selectedProductInListView.getCategory());
         tv_name.setText(selectedProductInListView.getName());
         Glide.with(getContext()).load(selectedProductInListView.getImgUrl()).into(product_img);
         dialog_product.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        if (Functions.generalConnectedPerson==null){
+        if (Functions.generalConnectedPerson == null) {
             btn_productDialog.setVisibility(View.GONE);
             btn_contact.setVisibility(View.GONE);
-        }
-        else if (Functions.generalConnectedPerson.getEmail().equals(selectedProductInListView.getUploader_email())){
+        } else if (Functions.generalConnectedPerson.getEmail().equals(selectedProductInListView.getUploader_email())) {
             btn_contact.setVisibility(View.GONE);
             btn_productDialog.setText("Edit");
             Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_edit_24);
@@ -199,7 +209,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                     tv_name.setText(selectedProductInListView.getName());
                     et_category.setText(selectedProductInListView.getCategory());
                     et_description.setText(selectedProductInListView.getDescription());
-                    et_price.setText(selectedProductInListView.getPrice()+"");
+                    et_price.setText(selectedProductInListView.getPrice() + "");
                     Glide.with(getContext()).load(selectedProductInListView.getImgUrl()).into(iv_product);
                     btn_remove.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -210,7 +220,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                             Partner p = (Partner) Functions.generalConnectedPerson;
                             p.removeItem(selectedProductInListView);
                             db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(p);
-                            Functions.generalConnectedPerson=p;
+                            Functions.generalConnectedPerson = p;
                             dialog_product_edit.dismiss();
 
                         }
@@ -219,21 +229,20 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                     btn_save.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (et_category.getText().toString().equals("") ||et_price.getText().toString().equals("") ||et_price.getText().toString().length()>= 7){
+                            if (et_category.getText().toString().equals("") || et_price.getText().toString().equals("") || et_price.getText().toString().length() >= 7) {
                                 Toast.makeText(getContext(), "Insert Valid Data", Toast.LENGTH_SHORT).show();
 
-                            }
-                            else {
+                            } else {
                                 String category = et_category.getText().toString();
-                                String description = et_description.getText().toString()+"";
+                                String description = et_description.getText().toString() + "";
                                 int price = Integer.parseInt(et_price.getText().toString());
                                 String imgId = selectedProductInListView.getImgUrl();
                                 String productId = selectedProductInListView.getProductId();
                                 String uploader_email = selectedProductInListView.getUploader_email();
 
-                                Product editedProduct = new Product(selectedProductInListView.getName(),category,imgId,price,productId,description,uploader_email);
+                                Product editedProduct = new Product(selectedProductInListView.getName(), category, imgId, price, productId, description, uploader_email);
                                 productAdapter.remove(selectedProductInListView);
-                                productAdapter.insert(editedProduct,i);
+                                productAdapter.insert(editedProduct, i);
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 db.collection("products").document(selectedProductInListView.getProductId()).set(editedProduct);
                                 Partner p = (Partner) Functions.generalConnectedPerson;
@@ -254,8 +263,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
                 }
             });
-        }
-        else {
+        } else {
             btn_contact.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -269,10 +277,10 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             btn_productDialog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean inCart= false;
+                    boolean inCart = false;
                     for (int j = 0; j < Functions.generalConnectedPerson.getCart().size(); j++) {
-                        inCart= Functions.generalConnectedPerson.getCart().get(j).getProductId().equals(selectedProductInListView.getProductId());
-                        if (inCart){
+                        inCart = Functions.generalConnectedPerson.getCart().get(j).getProductId().equals(selectedProductInListView.getProductId());
+                        if (inCart) {
                             break;
                         }
                     }
@@ -280,11 +288,10 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                         Functions.generalConnectedPerson.getCart().add(selectedProductInListView);
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                         db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(Functions.generalConnectedPerson);
-                        Toast.makeText(getContext(), selectedProductInListView.getName()+" added to cart", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), selectedProductInListView.getName() + " added to cart", Toast.LENGTH_SHORT).show();
                         Functions.setPerson();
-                    }
-                    else {
-                        Toast.makeText(getContext(), selectedProductInListView.getName()+" already in cart", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), selectedProductInListView.getName() + " already in cart", Toast.LENGTH_SHORT).show();
 
                     }
                     dialog_product.cancel();

@@ -2,10 +2,7 @@ package com.example.shop.fragments;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
@@ -17,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -52,7 +48,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
     private String mParam2;
 
     ArrayList<Product> productArrayList = new ArrayList<>();
-
+    Dialog dialog_product;
     ListView lvProduct;
     ProductAdapter productAdapter;
 
@@ -110,25 +106,8 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                             AccountFragment.uploadedProducts.clear(); // to be clear from doubles
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Product temp = document.toObject(Product.class);
+                                filterProducts(temp);
 
-                                // Filter products by price , category and name
-                                if (Functions.generalConnectedPerson instanceof Partner) {
-                                    if (Functions.generalConnectedPerson.getEmail().equals(temp.getUploader_email())){
-                                        AccountFragment.uploadedProducts.add(temp);
-                                    }
-                                    else if (MainActivity.product_limit_price >= temp.getPrice() && //price
-                                            (MainActivity.product_name.equals("") || MainActivity.product_name.equals(temp.getName())) && // name
-                                            (MainActivity.product_category.equals("") || MainActivity.product_category.equals(temp.getCategory())))// category
-                                    {
-                                        productArrayList.add(temp);
-                                    }
-                                } else {
-                                    if (MainActivity.product_limit_price >= temp.getPrice() && //price
-                                            (MainActivity.product_name.equals("") || MainActivity.product_name.equals(temp.getName())) && // name
-                                            (MainActivity.product_category.equals("") || MainActivity.product_category.equals(temp.getCategory()))) { // category
-                                        productArrayList.add(temp);
-                                    }
-                                }
                             }
 
                             // Sort products by price
@@ -149,6 +128,26 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                 });
     }
 
+    // filter the products in "products fragment"
+    private void filterProducts(Product temp) {
+        // Filter products by price , category and name
+        if (Functions.generalConnectedPerson instanceof Partner) { // the user wont be able to see the products that he have uploaded
+            if (!(Functions.generalConnectedPerson.getEmail().equals(temp.getUploader_email())) &&
+                    MainActivity.product_limit_price >= temp.getPrice() && //price
+                    (MainActivity.product_name.equals("") || MainActivity.product_name.equals(temp.getName())) && // name
+                    (MainActivity.product_category.equals("") || MainActivity.product_category.equals(temp.getCategory())))// category
+            {
+                productArrayList.add(temp);
+            }
+        } else {
+            if (MainActivity.product_limit_price >= temp.getPrice() && //price
+                    (MainActivity.product_name.equals("") || MainActivity.product_name.equals(temp.getName())) && // name
+                    (MainActivity.product_category.equals("") || MainActivity.product_category.equals(temp.getCategory()))) { // category
+                productArrayList.add(temp);
+            }
+        }
+    }
+
     // Create the adapter for the product list
     public void createAdapter() {
 
@@ -158,20 +157,33 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
     }
 
-
+    // product have been pressed
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Product selectedProductInListView = productAdapter.getItem(i);
-        Dialog dialog_product = new Dialog(getContext());
+        openProductDialog(selectedProductInListView);
+    }
+    // manage and open the product dialog
+    private void openProductDialog(Product selectedProductInListView) {
+        dialog_product = new Dialog(getContext());
         dialog_product.setContentView(R.layout.dialog_product);
         dialog_product.setCancelable(true);
+
         TextView tv_price = dialog_product.findViewById(R.id.tv_price);
         TextView tv_description = dialog_product.findViewById(R.id.tv_description);
         TextView tv_category = dialog_product.findViewById(R.id.tv_category);
         TextView tv_name = dialog_product.findViewById(R.id.tv_name);
         ImageView product_img = dialog_product.findViewById(R.id.iv_product);
-        Button btn_productDialog = dialog_product.findViewById(R.id.btn_productDialog);
-        Button btn_contact = dialog_product.findViewById(R.id.btn_contact);
+
+        setProductDetails(selectedProductInListView, tv_price, tv_description, tv_category, tv_name, product_img);
+        setDialogButtons(selectedProductInListView, dialog_product);
+
+        dialog_product.create();
+        dialog_product.show();
+    }
+
+    // set the products details inside the dialog
+    private void setProductDetails(Product selectedProductInListView, TextView tv_price, TextView tv_description, TextView tv_category, TextView tv_name, ImageView product_img) {
         tv_price.setText(selectedProductInListView.getPrice() + "$");
         tv_name.setText(selectedProductInListView.getName());
         if (selectedProductInListView.getDescription().equals("")) {
@@ -180,128 +192,66 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             tv_description.setText(selectedProductInListView.getDescription());
         }
         tv_category.setText(selectedProductInListView.getCategory());
-        tv_name.setText(selectedProductInListView.getName());
         Glide.with(getContext()).load(selectedProductInListView.getImgUrl()).into(product_img);
         dialog_product.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+    }
+
+    // set the dialog buttons
+    private void setDialogButtons(Product selectedProductInListView, Dialog dialog_product) {
+        Button btn_productDialog = dialog_product.findViewById(R.id.btn_productDialog);
+        Button btn_contact = dialog_product.findViewById(R.id.btn_contact);
+
         if (Functions.generalConnectedPerson == null) {
             btn_productDialog.setVisibility(View.GONE);
             btn_contact.setVisibility(View.GONE);
-        } else if (Functions.generalConnectedPerson.getEmail().equals(selectedProductInListView.getUploader_email())) {
-            btn_contact.setVisibility(View.GONE);
-            btn_productDialog.setText("Edit");
-            Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_edit_24);
-            btn_productDialog.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
-
-            btn_productDialog.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Dialog dialog_product_edit = new Dialog(getContext());
-                    dialog_product_edit.setContentView(R.layout.dialog_product_edit);
-                    dialog_product_edit.setCancelable(true);
-                    dialog_product_edit.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation2;
-                    EditText et_category = dialog_product_edit.findViewById(R.id.et_category);
-                    TextView tv_name = dialog_product_edit.findViewById(R.id.tv_name);
-                    EditText et_description = dialog_product_edit.findViewById(R.id.et_description);
-                    EditText et_price = dialog_product_edit.findViewById(R.id.et_price);
-                    Button btn_save = dialog_product_edit.findViewById(R.id.btn_save);
-                    Button btn_remove = dialog_product_edit.findViewById(R.id.btn_remove);
-                    ImageView iv_product = dialog_product_edit.findViewById(R.id.iv_product);
-                    tv_name.setText(selectedProductInListView.getName());
-                    et_category.setText(selectedProductInListView.getCategory());
-                    et_description.setText(selectedProductInListView.getDescription());
-                    et_price.setText(selectedProductInListView.getPrice() + "");
-                    Glide.with(getContext()).load(selectedProductInListView.getImgUrl()).into(iv_product);
-                    btn_remove.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            productAdapter.remove(selectedProductInListView);
-                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            db.collection("products").document(selectedProductInListView.getProductId()).delete();
-                            Partner p = (Partner) Functions.generalConnectedPerson;
-                            p.removeItem(selectedProductInListView);
-                            db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(p);
-                            Functions.generalConnectedPerson = p;
-                            dialog_product_edit.dismiss();
-
-                        }
-                    });
-
-                    btn_save.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (et_category.getText().toString().equals("") || et_price.getText().toString().equals("") || et_price.getText().toString().length() >= 7) {
-                                Toast.makeText(getContext(), "Insert Valid Data", Toast.LENGTH_SHORT).show();
-
-                            } else {
-                                String category = et_category.getText().toString();
-                                String description = et_description.getText().toString() + "";
-                                int price = Integer.parseInt(et_price.getText().toString());
-                                String imgId = selectedProductInListView.getImgUrl();
-                                String productId = selectedProductInListView.getProductId();
-                                String uploader_email = selectedProductInListView.getUploader_email();
-
-                                Product editedProduct = new Product(selectedProductInListView.getName(), category, imgId, price, productId, description, uploader_email);
-                                productAdapter.remove(selectedProductInListView);
-                                productAdapter.insert(editedProduct, i);
-                                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                db.collection("products").document(selectedProductInListView.getProductId()).set(editedProduct);
-                                Partner p = (Partner) Functions.generalConnectedPerson;
-                                p.removeItem(selectedProductInListView);
-                                p.getItems().add(editedProduct);
-                                db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(p);
-                                Functions.generalConnectedPerson = p;
-                                dialog_product_edit.dismiss();
-                            }
-                        }
-                    });
-
-
-                    dialog_product.dismiss();
-
-                    dialog_product_edit.create();
-                    dialog_product_edit.show();
-
-                }
-            });
         } else {
-            btn_contact.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Functions.openEmail(selectedProductInListView, getContext());
-                }
-            });
-
-            btn_productDialog.setText("ADD TO CART");
-            Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_add_shopping_cart_24);
-            btn_productDialog.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
-            btn_productDialog.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    boolean inCart = false;
-                    for (int j = 0; j < Functions.generalConnectedPerson.getCart().size(); j++) {
-                        inCart = Functions.generalConnectedPerson.getCart().get(j).getProductId().equals(selectedProductInListView.getProductId());
-                        if (inCart) {
-                            break;
-                        }
-                    }
-                    if (!inCart) {
-                        Functions.generalConnectedPerson.getCart().add(selectedProductInListView);
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(Functions.generalConnectedPerson);
-                        Toast.makeText(getContext(), selectedProductInListView.getName() + " added to cart", Toast.LENGTH_SHORT).show();
-                        Functions.setPerson();
-                    } else {
-                        Toast.makeText(getContext(), selectedProductInListView.getName() + " already in cart", Toast.LENGTH_SHORT).show();
-
-                    }
-                    dialog_product.cancel();
-                }
-            });
+            setContactButton(selectedProductInListView, btn_contact);
+            setAddToCartButton(selectedProductInListView, btn_productDialog, dialog_product);
         }
-        dialog_product.create();
-        dialog_product.show();
-
-
     }
+
+    private void setContactButton(Product selectedProductInListView, Button btn_contact) {
+        btn_contact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Functions.openEmail(selectedProductInListView, getContext());
+            }
+        });
+    }
+
+    private void setAddToCartButton(Product selectedProductInListView, Button btn_productDialog, Dialog dialog_product) {
+        btn_productDialog.setText("ADD TO CART");
+        Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_add_shopping_cart_24);
+        btn_productDialog.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
+        btn_productDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addToCart(selectedProductInListView);
+                dialog_product.cancel();
+            }
+        });
+    }
+
+    //add the product to the cart if he isn't there
+    private void addToCart(Product selectedProductInListView) {
+        boolean inCart = false;
+        for (int j = 0; j < Functions.generalConnectedPerson.getCart().size(); j++) {
+            inCart = Functions.generalConnectedPerson.getCart().get(j).getProductId().equals(selectedProductInListView.getProductId());
+            if (inCart) {
+                break;
+            }
+        }
+        if (!inCart) { // add the product to the user's cart and update it in the fire base
+            Functions.generalConnectedPerson.getCart().add(selectedProductInListView);
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(Functions.generalConnectedPerson);
+            Toast.makeText(getContext(), selectedProductInListView.getName() + " added to cart", Toast.LENGTH_SHORT).show();
+            Functions.setPerson();
+        } else {
+            Toast.makeText(getContext(), selectedProductInListView.getName() + " already in cart", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
 
 }

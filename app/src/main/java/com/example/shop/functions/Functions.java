@@ -123,6 +123,19 @@ public class Functions {
         }
     }
 
+    // open the email in order to talk about a product aget you bought it
+    public static void openEmailForOrders(Product selectedProduct, Context context){
+        try {
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{selectedProduct.getBuyer_email()});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "SHOP, " + selectedProduct.getName());
+            intent.putExtra(Intent.EXTRA_TEXT, "Hi, you bought a product from me - " + selectedProduct.getName() +" at the date- " +selectedProduct.getPurchaseDate()+". \n"+Functions.generalConnectedPerson.getFirstName() +"." );
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, "No email app found on your device", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     // the functions close the keyboard
     public static void closeKeyboard(Context context, View view) {

@@ -21,12 +21,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.shop.R;
 import com.example.shop.activities.MainActivity;
 import com.example.shop.adapters.ProductAdapter;
 import com.example.shop.functions.Functions;
-import com.example.shop.functions.onProductClick;
+import com.example.shop.functions.OnProductClick;
 import com.example.shop.objects.Partner;
 import com.example.shop.objects.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -170,7 +169,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Product selectedProductInListView = productAdapter.getItem(i);
-        dialog_product = onProductClick.productClicked(selectedProductInListView,getContext());
+        dialog_product = OnProductClick.productClicked(selectedProductInListView,getContext());
         setDialogButtons(selectedProductInListView, dialog_product);
     }
 

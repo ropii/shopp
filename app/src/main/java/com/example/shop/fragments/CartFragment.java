@@ -26,10 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.bumptech.glide.Glide;
 import com.example.shop.adapters.CartAdapter;
 import com.example.shop.functions.Functions;
-import com.example.shop.functions.onProductClick;
+import com.example.shop.functions.OnProductClick;
 import com.example.shop.objects.Date;
 import com.example.shop.objects.Partner;
 import com.example.shop.objects.Product;
@@ -201,10 +200,10 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Product selectedProductInListView = cartAdapter.getItem(i);
-        dialog_product = onProductClick.productClicked(selectedProductInListView,getContext());
+        dialog_product = OnProductClick.productClicked(selectedProductInListView,getContext());
         setDialogButtons(selectedProductInListView, dialog_product);
     }
-    /////////////
+
 
     // set the dialog buttons
     private void setDialogButtons(Product selectedProductInListView, Dialog dialog_product) {
@@ -236,7 +235,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         });
     }
 
-    //add the product to the cart if he isn't there
+    //remove the product from the cart
     private void remove(Product selectedProductInListView) {
         cartAl.remove(selectedProductInListView);
         Functions.generalConnectedPerson.setCart(cartAl);
@@ -289,7 +288,17 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
             if (cartAl.get(i).isEquals(temp)) {
                 db.collection("products").document(temp.getProductId()).delete();
                 temp.setPurchaseDate(createOrderDate());
+                temp.setBuyer_email(Functions.generalConnectedPerson.getEmail());
+                temp.setBuyer_zip(((Partner)Functions.generalConnectedPerson).getZip());
                 ((Partner) Functions.generalConnectedPerson).addsToHistory(temp);
+                updateSeller(temp);
+            }
+        }
+    }
+    //add the product that have sold to a new document in the fire-base
+    // (i don't add it the seller because of the onSuccess and onComplete take a lot of time)
+    private void updateSeller(Product product){
+        db.collection("soldProducts").document(product.getProductId()).set(product);
 /*   add the order
                 db.collection("users").document(temp.getUploader_email())
                         .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -302,9 +311,9 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
                             }
                         });
 */
-            }
-        }
     }
+
+    //create the order date
     public Date createOrderDate(){
         return Date.getCurrentDate();
     }

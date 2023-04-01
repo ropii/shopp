@@ -10,13 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="No History"
-        android:textSize="75dp"
+        android:textSize="65dp"
         android:textAlignment="center"
         android:gravity="center"
         android:id="@+id/tv_noHistory"
         />
     <ListView
-        android:layout_width="250dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/lvHistory"
         android:layout_margin="10dp"

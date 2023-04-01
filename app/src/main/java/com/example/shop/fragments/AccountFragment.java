@@ -34,7 +34,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.example.shop.adapters.ProductAdapter;
 import com.example.shop.functions.Functions;
-import com.example.shop.functions.onProductClick;
+import com.example.shop.functions.OnProductClick;
 import com.example.shop.objects.CreditCard;
 import com.example.shop.objects.Date;
 import com.example.shop.objects.Partner;
@@ -80,7 +80,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         return fragment;
     }
 
-    Button btn_signUp_acc, btn_signIn_acc, btn_signOut_acc, btn_AccountSettings_acc, btn_history_acc, btn_items_acc;
+    Button btn_signUp_acc, btn_signIn_acc, btn_signOut_acc, btn_AccountSettings_acc, btn_history_acc, btn_items_acc,btn_orders_acc;
     ImageView iv_gear;
     TextView textView;
     ProductAdapter productAdapter;
@@ -106,6 +106,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
 
 
         btn_signUp_acc = view.findViewById(R.id.btn_signUp_acc);
+        btn_orders_acc = view.findViewById(R.id.btn_orders_acc);
         btn_signIn_acc = view.findViewById(R.id.btn_signIn_acc);
         btn_signOut_acc = view.findViewById(R.id.btn_signOut_acc);
         btn_AccountSettings_acc = view.findViewById(R.id.btn_AccountSettings_acc);
@@ -114,6 +115,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         iv_gear = view.findViewById(R.id.iv_gear);
         textView = view.findViewById(R.id.textView);
         btn_signUp_acc.setOnClickListener(this);
+        btn_orders_acc.setOnClickListener(this);
         btn_history_acc.setOnClickListener(this);
         btn_signIn_acc.setOnClickListener(this);
         btn_items_acc.setOnClickListener(this);
@@ -150,7 +152,70 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         if (view == btn_items_acc) {
             openUploadedProducts();
         }
+        if (view == btn_orders_acc) {
+            openOrders();
+        }
     }
+
+    private void openOrders() {
+        ArrayList<Product> orders = new ArrayList<>();
+        ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Loading...");
+        progressDialog.show();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("soldProducts")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@org.checkerframework.checker.nullness.qual.NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Product temp = document.toObject(Product.class);
+                                if (temp.getUploader_email().equals(generalConnectedPerson.getEmail())) { //get the products that the user have uploaded
+                                    orders.add(temp);
+                                }
+                            }
+
+                            Dialog ordersDialog = new Dialog(getContext());
+                            ordersDialog.setContentView(R.layout.dialog_history);
+                            ordersDialog.setCancelable(true);
+                            TextView tv_noHistory = ordersDialog.findViewById(R.id.tv_noHistory);
+                            ListView lvHistory = ordersDialog.findViewById(R.id.lvHistory);
+                            if (orders.size() == 0) {
+                                tv_noHistory.setText("No \nOrders");
+                                tv_noHistory.setVisibility(View.VISIBLE);
+                            } else {
+                                tv_noHistory.setVisibility(View.GONE);
+                            }
+                            //create the adapter
+                            productAdapter = new ProductAdapter(getContext(), 0, 0, orders);
+                            lvHistory.setAdapter(productAdapter);
+                            lvHistory.setOnScrollListener(productAdapter);
+                            lvHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    dialog_product = OnProductClick.productClicked(productAdapter.getItem(position), getContext());
+                                    setDialogButtonsOrders(productAdapter.getItem(position), dialog_product);
+                                    dialog_product.create();
+                                    dialog_product.show();
+                                    ordersDialog.dismiss();
+
+                                }
+                            });
+
+                            ordersDialog.create();
+                            ordersDialog.show();
+
+
+                            progressDialog.dismiss();
+                        }
+                    }
+                });
+
+    }
+
+
 
     private void openUploadedProducts() {
         uploadedProducts.clear();
@@ -197,7 +262,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
                             lvHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                    dialog_product = onProductClick.productClicked(productAdapter.getItem(position), getContext());
+                                    dialog_product = OnProductClick.productClicked(productAdapter.getItem(position), getContext());
                                     setDialogButtonsItems(productAdapter.getItem(position), dialog_product);
                                     dialog_product.create();
                                     dialog_product.show();
@@ -569,9 +634,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         builder.show();
     }
 
-
-    // פעולות עזר
-
     // הפעולה מחברת את המשתמש בעזרת אימייל וסיסמא שהיא מקבלת מהדיאלוג
     private void logIn(String str_email, String str_password) {
 
@@ -638,6 +700,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
             btn_AccountSettings_acc.setVisibility(View.VISIBLE);
             btn_history_acc.setVisibility(View.VISIBLE);
             btn_items_acc.setVisibility(View.VISIBLE);
+            btn_orders_acc.setVisibility(View.VISIBLE);
 
         } else {
             btn_signUp_acc.setVisibility(View.VISIBLE);
@@ -646,6 +709,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
             btn_AccountSettings_acc.setVisibility(View.GONE);
             btn_history_acc.setVisibility(View.GONE);
             btn_items_acc.setVisibility(View.GONE);
+            btn_orders_acc.setVisibility(View.GONE);
         }
     }
 
@@ -658,7 +722,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
     // onItemClick for the history()
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        dialog_product = onProductClick.productClicked(productAdapter.getItem(i), getContext());
+        dialog_product = OnProductClick.productClicked(productAdapter.getItem(i), getContext());
         setDialogButtonsHistory(productAdapter.getItem(i), dialog_product);
 
     }
@@ -679,7 +743,15 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         setEditButton(selectedProductInListView, btn_productDialog);
     }
 
-    ////
+    //set the dialog's button when the user want to see his orders
+    private void setDialogButtonsOrders(Product item, Dialog dialog_product) {
+        Button btn_productDialog = dialog_product.findViewById(R.id.btn_productDialog);
+        btn_productDialog.setVisibility(View.GONE);
+        Button btn_contact = dialog_product.findViewById(R.id.btn_contact);
+        setContactButtonForOrders(item, btn_contact);
+
+    }
+    // when you press the "remove" button in the editProductDialog
     private void btnRemoveListener(Product selectedProductInListView) {
         productAdapter.remove(selectedProductInListView);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -691,6 +763,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         dialog_product_edit.dismiss();
     }
 
+    // create the editProductDialog
     private void createEditDialog(Product selectedProductInListView) {
         dialog_product_edit = new Dialog(getContext());
         dialog_product_edit.setContentView(R.layout.dialog_product_edit);
@@ -702,6 +775,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         dialog_product_edit.show();
     }
 
+    // set the info in the editProductDialog
     private void setProductEditInfo(Product selectedProductInListView) {
         EditText et_category = dialog_product_edit.findViewById(R.id.et_category);
         TextView tv_name = dialog_product_edit.findViewById(R.id.tv_name);
@@ -730,6 +804,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         });
     }
 
+    // when you press the "save" after editing a product
     private void btnSaveListener(Product selectedProductInListView, EditText et_category, EditText et_price, EditText et_description) {
         if (et_category.getText().toString().equals("") || et_price.getText().toString().equals("") || et_price.getText().toString().length() >= 7) {
             Toast.makeText(getContext(), "Insert Valid Data", Toast.LENGTH_SHORT).show();
@@ -754,8 +829,9 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
 
         }
     }
-    ////
 
+
+    // set the edit buttom in the products you have uploaded dialog
     private void setEditButton(Product selectedProductInListView, Button btn_productDialog) {
         btn_productDialog.setText("Edit");
         Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_edit_24);
@@ -768,11 +844,22 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         });
     }
 
+    // set the contact button in the history
     private void setContactButton(Product selectedProductInListView, Button btn_contact) {
         btn_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Functions.openEmailAfterBuy(selectedProductInListView, getContext());
+            }
+        });
+    }
+
+    // set the contact button in the orders
+    private void setContactButtonForOrders(Product selectedProductInListView, Button btn_contact) {
+        btn_contact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Functions.openEmailForOrders(selectedProductInListView, getContext());
             }
         });
     }

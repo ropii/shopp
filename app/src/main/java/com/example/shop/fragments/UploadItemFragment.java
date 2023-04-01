@@ -67,7 +67,7 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
     private String mParam1;
     private String mParam2;
 
-    private static final int CAMERA_REQUEST = 1888,GALLERY_REQUEST=1889;
+    private static final int CAMERA_REQUEST = 1888, GALLERY_REQUEST = 1889;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     private static final int MY_GALLERY_PERMISSION_CODE = 123;
 
@@ -115,68 +115,14 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
         iv_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create a view for the gallery option
                 LinearLayout galleryView = new LinearLayout(getContext());
-                galleryView.setOrientation(LinearLayout.HORIZONTAL);
-                galleryView.setGravity(Gravity.CENTER_VERTICAL);
-                galleryView.setPadding(16, 16, 16, 16);
-                ImageView galleryIcon = new ImageView(getContext());
-                galleryIcon.setImageResource(R.drawable.icon_gallery);
-                galleryView.addView(galleryIcon);
-                TextView galleryText = new TextView(getContext());
-                galleryText.setText("Gallery");
-                galleryText.setTextSize(18);
-                galleryView.addView(galleryText);
-
-                // Create a view for the camera option
+                createGalleryView(galleryView);
                 LinearLayout cameraView = new LinearLayout(getContext());
-                cameraView.setOrientation(LinearLayout.HORIZONTAL);
-                cameraView.setGravity(Gravity.CENTER_VERTICAL);
-                cameraView.setPadding(16, 16, 16, 16);
-                ImageView cameraIcon = new ImageView(getContext());
-                cameraIcon.setImageResource(R.drawable.icon_camera);
-                cameraView.addView(cameraIcon);
-                TextView cameraText = new TextView(getContext());
-                cameraText.setText("Camera");
-                cameraText.setTextSize(18);
-                cameraView.addView(cameraText);
-
-                // Create an AlertDialog with two options: Gallery and Camera
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Select Image");
-                builder.setNegativeButton("Cancel", null);
-                builder.setView(galleryView);
-                builder.setView(cameraView);
-                final AlertDialog dialog = builder.create();
-
-                // Set the click listeners for the custom views
-                galleryView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        selectImageFromGallery();
-                    }
-                });
-
-                cameraView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        selectImageFromCamera();
-                    }
-                });
-
-                // Add both views to the dialog
-                LinearLayout optionsLayout = new LinearLayout(getContext());
-                optionsLayout.setOrientation(LinearLayout.VERTICAL);
-                optionsLayout.addView(galleryView);
-                optionsLayout.addView(cameraView);
-                dialog.setView(optionsLayout);
-
-                dialog.show();
+                createCameraView(cameraView);
+                // now i have 2 options() camera & gallery.
+                createImgDialog( galleryView, cameraView );
             }
         });
-
 
 
         ib_upload.setOnClickListener(this);
@@ -188,8 +134,79 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
         iv_cloud.startAnimation(popInAnimation);
         textView_upload.startAnimation(popInAnimation);
 
-
         return view;
+    }
+
+    // create an alertDialog builder with the gallery and camera options, the functions return the dialog.
+    private AlertDialog createImgDialogBuilder(LinearLayout galleryView,LinearLayout cameraView ){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Select Image");
+        builder.setNegativeButton("Cancel", null);
+        builder.setView(galleryView);
+        builder.setView(cameraView);
+        return  builder.create();
+    }
+
+    // create the alertDialog that let you chose the img source.
+    private void createImgDialog(LinearLayout galleryView,LinearLayout cameraView ){
+        AlertDialog dialog =createImgDialogBuilder(galleryView,cameraView);
+
+        // Set the click listeners for the custom views
+        galleryView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                selectImageFromGallery();
+            }
+        });
+
+        cameraView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                selectImageFromCamera();
+            }
+        });
+
+        // Add both views to the dialog
+        LinearLayout optionsLayout = new LinearLayout(getContext());
+        optionsLayout.setOrientation(LinearLayout.VERTICAL);
+        optionsLayout.addView(galleryView);
+        optionsLayout.addView(cameraView);
+        dialog.setView(optionsLayout);
+
+        dialog.show();
+    }
+
+
+
+    // Create a view for the camera option
+    private void createCameraView(LinearLayout cameraView) {
+        cameraView.setOrientation(LinearLayout.HORIZONTAL);
+        cameraView.setGravity(Gravity.CENTER_VERTICAL);
+        cameraView.setPadding(16, 16, 16, 16);
+        ImageView cameraIcon = new ImageView(getContext());
+        cameraIcon.setImageResource(R.drawable.icon_camera);
+        cameraView.addView(cameraIcon);
+        TextView cameraText = new TextView(getContext());
+        cameraText.setText("Camera");
+        cameraText.setTextSize(18);
+        cameraView.addView(cameraText);
+
+    }
+
+    // Create a view for the gallery option
+    private void createGalleryView(LinearLayout galleryView) {
+        galleryView.setOrientation(LinearLayout.HORIZONTAL);
+        galleryView.setGravity(Gravity.CENTER_VERTICAL);
+        galleryView.setPadding(16, 16, 16, 16);
+        ImageView galleryIcon = new ImageView(getContext());
+        galleryIcon.setImageResource(R.drawable.icon_gallery);
+        galleryView.addView(galleryIcon);
+        TextView galleryText = new TextView(getContext());
+        galleryText.setText("Gallery");
+        galleryText.setTextSize(18);
+        galleryView.addView(galleryText);
     }
 
 
@@ -199,7 +216,7 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
             String str_name = ed_name.getText().toString();
             String str_category = ed_category.getText().toString();
             String str_price = ed_price.getText().toString();
-            if (valid_info(str_name,str_category,str_price)) {  // the infor is valid' it can be uploaded to the fire base
+            if (valid_info(str_name, str_category, str_price)) {  // the info is valid' it can be uploaded to the fire base
                 iv_img.setDrawingCacheEnabled(true);
                 iv_img.buildDrawingCache();
                 Bitmap bitmap = ((BitmapDrawable) iv_img.getDrawable()).getBitmap();
@@ -215,8 +232,8 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
     /////////////////////////////////////////////////////////////////////////
 
 
-
-    private void selectImageFromCamera() { // take a picture from the camera
+    // take a picture from the camera
+    private void selectImageFromCamera() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
             Toast.makeText(getContext(), "Camera permission denied", Toast.LENGTH_SHORT).show();
@@ -227,7 +244,8 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private void selectImageFromGallery() { // select an image from the gallery
+    // select an image from the gallery
+    private void selectImageFromGallery() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_GALLERY_PERMISSION_CODE);
             return;
@@ -265,7 +283,7 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
                         Intent data = result.getData();
                         if (data != null) {
                             Uri selectedImage = data.getData();
-                            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                            String[] filePathColumn = {MediaStore.Images.Media.DATA};
                             Cursor cursor = getContext().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                             cursor.moveToFirst();
 
@@ -282,10 +300,10 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
             });
 
 
-// upload the product to the fire-store and the img to the storage
+    // upload the product to the fire-store and the img to the storage
     private void uploadProduct(Bitmap bitmap, String name, String category, String price, String description) {
 
-        // Code for showing progressDialog while uploading
+        //showing progressDialog while uploading
         ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setTitle("Uploading...");
         progressDialog.setCancelable(false);
@@ -361,8 +379,7 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
     }
 
 
-
-    // הפעולה בודקת האם הנתונים שהוכנסו אודות המוצר תקינים
+    // check if the product's info is valid and return it
     private boolean valid_info(String str_name, String str_category, String str_price) {
         boolean valid_info = true;
         if (iv_img.getDrawable() == null) {
@@ -388,7 +405,7 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
         return valid_info;
     }
 
-    // הפעולה יוצרת מוצר באמת לקלט ומחזירה אותו
+    // create a new products based on the info and return it
     private Product createProduct(String str_description, String str_name, String str_category, String str_price, String productId, String imgUrl) {
         if (str_description.equals("")) {
             return new Product(str_name.trim(), str_category.trim(), imgUrl, Integer.parseInt(str_price), productId, Functions.generalConnectedPerson.getEmail());

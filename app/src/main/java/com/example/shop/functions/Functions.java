@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -107,6 +109,27 @@ public class Functions {
             Toast.makeText(context, "No email app found on your device", Toast.LENGTH_SHORT).show();
         }
     }
+    // open the email in order to talk about a product aget you bought it
+    public static void openEmailAfterBuy(Product selectedProduct, Context context){
+        try {
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{selectedProduct.getUploader_email()});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "SHOP, " + selectedProduct.getName());
+            intent.putExtra(Intent.EXTRA_TEXT, "Hi, I bought a product that you have uploaded - " + selectedProduct.getName() +" at the date- " +selectedProduct.getPurchaseDate()+". \n"+Functions.generalConnectedPerson.getFirstName() +"." );
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, "No email app found on your device", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    // the functions close the keyboard
+    public static void closeKeyboard(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     // בדיקת תכנות
     public void test() {
         Date date = new Date(12, 2022);

@@ -2,6 +2,7 @@ package com.example.shop.activities;
 
 import static android.app.PendingIntent.getActivity;
 
+import static com.example.shop.functions.Functions.closeKeyboard;
 import static com.example.shop.functions.Functions.generalConnectedPerson;
 import static com.example.shop.functions.Functions.returnConnectedPerson;
 import static com.example.shop.functions.Functions.setPerson;
@@ -171,14 +172,8 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         if (view == btn_reset) { // when the user want to reset and arise the filters
-            et_productSearch.setText("");
-            et_priceLimit.setText("");
-            et_categorySearch.setText("");
-            product_limit_price = Integer.MAX_VALUE;
-            product_name = "";
-            product_category="";
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // close the keyboard
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            resetFilterParams();
+            closeKeyboard(MainActivity.this, view);
             drawerLayout.close();
             handleFilter();
 
@@ -186,8 +181,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         if (view == btn_confirm) { // when the user want to search a product based on the filters
             String price = et_priceLimit.getText().toString().trim();
             if (price.length() <= 6) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                closeKeyboard(MainActivity.this, view);
                 drawerLayout.close();
                 product_name = et_productSearch.getText().toString().trim();
                 product_category = et_categorySearch.getText().toString().trim();
@@ -266,5 +260,15 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         unauthorizedAccessDialog.show();
     }
 
+
+    // reset the filter params so all the products will appear.
+    public void resetFilterParams(){
+        et_productSearch.setText("");
+        et_priceLimit.setText("");
+        et_categorySearch.setText("");
+        product_limit_price = Integer.MAX_VALUE;
+        product_name = "";
+        product_category="";
+    }
 
 }

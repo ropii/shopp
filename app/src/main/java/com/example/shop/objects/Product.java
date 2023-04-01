@@ -1,6 +1,8 @@
 package com.example.shop.objects;
 
 
+import java.sql.Time;
+
 // אוביקט מסוג מוצר חייב להכיל: שם, קטגוריה, תמונה( כתתובת של תמנונה לאחסון בענן), מחיר ותג
 // לאוביקט מסוג זה יש אופציה להכיל תיאור( לא חובה להיות בעל תיאור)
 public class Product {
@@ -11,6 +13,7 @@ public class Product {
     private String productId;
     private int price;
     private String uploader_email;
+    private Date purchaseDate, uploadDate;
 
     public Product(String name, String category, String imgId, int price,String productId, String uploader_email) {
         this.name = name;
@@ -20,6 +23,7 @@ public class Product {
         this.description="";
         this.productId = productId;
         this.uploader_email = uploader_email;
+        this.uploadDate = Date.getCurrentDate();
     }
     public Product(String name,String category, String  imgId, int price,String productId,String description, String uploader_email) {
         this.name = name;
@@ -29,6 +33,8 @@ public class Product {
         this.productId = productId;
         this.description = description;
         this.uploader_email = uploader_email;
+        this.uploadDate = Date.getCurrentDate();
+
     }
     public Product(){}
 
@@ -92,5 +98,21 @@ public class Product {
 
     public void setUploader_email(String uploader_email) {
         this.uploader_email = uploader_email;
+    }
+
+    public Date getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(Date purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
+
+    public Date getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(Date uploadDate) {
+        this.uploadDate = uploadDate;
     }
 }

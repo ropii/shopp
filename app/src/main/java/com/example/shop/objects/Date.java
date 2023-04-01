@@ -1,5 +1,8 @@
 package com.example.shop.objects;
- /*
+
+import java.util.Calendar;
+
+/*
  קלאס של תאריך
  כעט בוא משומש בהוספת פרטי המשתמש( החלק של כרטיס האשראי)
  בהמשך הוא ישומש על מנת לדעת מתי המשלוח אמור להגיע
@@ -54,4 +57,17 @@ public class Date {
     public void setYear(int year) {
         this.year = year;
     }
+
+     public static Date getCurrentDate() {
+         // get the current system time
+         Calendar calendar = Calendar.getInstance();
+         // extract the day, month, and year from the current time
+         int year = calendar.get(Calendar.YEAR);
+         int month = calendar.get(Calendar.MONTH) + 1; // add 1 to get the correct month value (Jan = 0)
+         int day = calendar.get(Calendar.DAY_OF_MONTH);
+         return new Date(day, month, year);
+     }
+     public String toString(){
+        return getDay() +"/" + getMonth() +"/"+ getYear();
+     }
 }

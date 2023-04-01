@@ -1,14 +1,9 @@
 package com.example.shop.fragments;
 
-import static com.example.shop.activities.MainActivity.chipNavigationBar;
 import static com.example.shop.functions.Functions.generalConnectedPerson;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -21,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -31,19 +28,15 @@ import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.example.shop.adapters.CartAdapter;
-import com.example.shop.adapters.ProductAdapter;
 import com.example.shop.functions.Functions;
+import com.example.shop.functions.onProductClick;
+import com.example.shop.objects.Date;
 import com.example.shop.objects.Partner;
-import com.example.shop.objects.Person;
 import com.example.shop.objects.Product;
 import com.example.shop.R;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -53,7 +46,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.concurrent.ExecutionException;
 
 
 public class CartFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
@@ -101,11 +93,17 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         lvProductCart = view.findViewById(R.id.lvProductCart);
         tv_cartIsEmpty = view.findViewById(R.id.tv_cartIsEmpty);
         btn_buy = view.findViewById(R.id.btn_buy);
-
         manageBtnBuy();
         createArLs();
         Log.d("fragmentStart", "on create view");
         lvProductCart.setOnItemClickListener(this);
+        ImageView iv_cart = view.findViewById(R.id.iv_cart);
+        TextView textView_cart = view.findViewById(R.id.textView_cart);
+
+        Animation popInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
+
+        iv_cart.startAnimation(popInAnimation);
+        textView_cart.startAnimation(popInAnimation);
         return view;
     }
 
@@ -203,54 +201,17 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Product selectedProductInListView = cartAdapter.getItem(i);
-        openProductDialog(selectedProductInListView);
+        dialog_product = onProductClick.productClicked(selectedProductInListView,getContext());
+        setDialogButtons(selectedProductInListView, dialog_product);
     }
     /////////////
-    // manage and open the product dialog
-    private void openProductDialog(Product selectedProductInListView) {
-        dialog_product = new Dialog(getContext());
-        dialog_product.setContentView(R.layout.dialog_product);
-        dialog_product.setCancelable(true);
-
-        TextView tv_price = dialog_product.findViewById(R.id.tv_price);
-        TextView tv_description = dialog_product.findViewById(R.id.tv_description);
-        TextView tv_category = dialog_product.findViewById(R.id.tv_category);
-        TextView tv_name = dialog_product.findViewById(R.id.tv_name);
-        ImageView product_img = dialog_product.findViewById(R.id.iv_product);
-
-        setProductDetails(selectedProductInListView, tv_price, tv_description, tv_category, tv_name, product_img);
-        setDialogButtons(selectedProductInListView, dialog_product);
-
-        dialog_product.create();
-        dialog_product.show();
-    }
-
-    // set the products details inside the dialog
-    private void setProductDetails(Product selectedProductInListView, TextView tv_price, TextView tv_description, TextView tv_category, TextView tv_name, ImageView product_img) {
-        tv_price.setText(selectedProductInListView.getPrice() + "$");
-        tv_name.setText(selectedProductInListView.getName());
-        if (selectedProductInListView.getDescription().equals("")) {
-            tv_description.setVisibility(View.GONE);
-        } else {
-            tv_description.setText(selectedProductInListView.getDescription());
-        }
-        tv_category.setText(selectedProductInListView.getCategory());
-        Glide.with(getContext()).load(selectedProductInListView.getImgUrl()).into(product_img);
-        dialog_product.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-    }
 
     // set the dialog buttons
     private void setDialogButtons(Product selectedProductInListView, Dialog dialog_product) {
         Button btn_productDialog = dialog_product.findViewById(R.id.btn_productDialog);
         Button btn_contact = dialog_product.findViewById(R.id.btn_contact);
-
-        if (Functions.generalConnectedPerson == null) {
-            btn_productDialog.setVisibility(View.GONE);
-            btn_contact.setVisibility(View.GONE);
-        } else {
             setContactButton(selectedProductInListView, btn_contact);
             removeFromCartButton(selectedProductInListView, btn_productDialog, dialog_product);
-        }
     }
 
     private void setContactButton(Product selectedProductInListView, Button btn_contact) {
@@ -327,6 +288,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         for (int i = 0; i < cartAl.size(); i++) {
             if (cartAl.get(i).isEquals(temp)) {
                 db.collection("products").document(temp.getProductId()).delete();
+                temp.setPurchaseDate(createOrderDate());
                 ((Partner) Functions.generalConnectedPerson).addsToHistory(temp);
 /*   add the order
                 db.collection("users").document(temp.getUploader_email())
@@ -342,6 +304,9 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
 */
             }
         }
+    }
+    public Date createOrderDate(){
+        return Date.getCurrentDate();
     }
 
     // open a thank you dialog after buying

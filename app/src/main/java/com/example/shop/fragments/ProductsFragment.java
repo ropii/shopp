@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,6 +26,7 @@ import com.example.shop.R;
 import com.example.shop.activities.MainActivity;
 import com.example.shop.adapters.ProductAdapter;
 import com.example.shop.functions.Functions;
+import com.example.shop.functions.onProductClick;
 import com.example.shop.objects.Partner;
 import com.example.shop.objects.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -85,6 +88,13 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         lvProduct.setOnItemClickListener(this);
         Log.d("fragmentStart", "on create view");
 
+        ImageView iv_warehouse = view.findViewById(R.id.iv_warehouse);
+        TextView textView_products = view.findViewById(R.id.textView_products);
+
+        Animation popInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+
+        iv_warehouse.startAnimation(popInAnimation);
+        textView_products.startAnimation(popInAnimation);
 
         return view;
     }
@@ -103,7 +113,6 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            AccountFragment.uploadedProducts.clear(); // to be clear from doubles
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Product temp = document.toObject(Product.class);
                                 filterProducts(temp);
@@ -161,40 +170,10 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Product selectedProductInListView = productAdapter.getItem(i);
-        openProductDialog(selectedProductInListView);
-    }
-    // manage and open the product dialog
-    private void openProductDialog(Product selectedProductInListView) {
-        dialog_product = new Dialog(getContext());
-        dialog_product.setContentView(R.layout.dialog_product);
-        dialog_product.setCancelable(true);
-
-        TextView tv_price = dialog_product.findViewById(R.id.tv_price);
-        TextView tv_description = dialog_product.findViewById(R.id.tv_description);
-        TextView tv_category = dialog_product.findViewById(R.id.tv_category);
-        TextView tv_name = dialog_product.findViewById(R.id.tv_name);
-        ImageView product_img = dialog_product.findViewById(R.id.iv_product);
-
-        setProductDetails(selectedProductInListView, tv_price, tv_description, tv_category, tv_name, product_img);
+        dialog_product = onProductClick.productClicked(selectedProductInListView,getContext());
         setDialogButtons(selectedProductInListView, dialog_product);
-
-        dialog_product.create();
-        dialog_product.show();
     }
 
-    // set the products details inside the dialog
-    private void setProductDetails(Product selectedProductInListView, TextView tv_price, TextView tv_description, TextView tv_category, TextView tv_name, ImageView product_img) {
-        tv_price.setText(selectedProductInListView.getPrice() + "$");
-        tv_name.setText(selectedProductInListView.getName());
-        if (selectedProductInListView.getDescription().equals("")) {
-            tv_description.setVisibility(View.GONE);
-        } else {
-            tv_description.setText(selectedProductInListView.getDescription());
-        }
-        tv_category.setText(selectedProductInListView.getCategory());
-        Glide.with(getContext()).load(selectedProductInListView.getImgUrl()).into(product_img);
-        dialog_product.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-    }
 
     // set the dialog buttons
     private void setDialogButtons(Product selectedProductInListView, Dialog dialog_product) {

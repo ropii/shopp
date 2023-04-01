@@ -9,6 +9,7 @@ import android.widget.VideoView;
 
 import com.example.shop.R;
 import com.example.shop.archives.BasicActivity;
+import com.example.shop.functions.Functions;
 
 public class HomeActivity extends BasicActivity implements View.OnClickListener {
 
@@ -18,6 +19,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Functions.setPerson();
         btn_start = findViewById(R.id.btn_start);
         btn_start.setOnClickListener(this);
         videoView = findViewById(R.id.videoView);

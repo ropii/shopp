@@ -117,7 +117,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
                 Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_white, null);
                 Drawable drawable2 = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_account, null);
                 Drawable drawable3 = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_product, null);
-
+                setPerson();
                 Fragment fragment = null;
                 switch (i) {
                     case R.id.menu_about:

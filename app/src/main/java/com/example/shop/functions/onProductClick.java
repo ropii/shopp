@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.example.shop.R;
 import com.example.shop.objects.Product;
 
+//because i open the same dialog several time i wrote this code here to not duplicate it
 public class onProductClick {
     static Product selectedProductInListViewClass;
     static Context contextClass;

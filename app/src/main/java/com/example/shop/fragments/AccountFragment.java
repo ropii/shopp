@@ -186,7 +186,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
                                 tv_noHistory.setText("No \nOrders");
                                 tv_noHistory.setVisibility(View.VISIBLE);
                             } else {
-                                tv_noHistory.setVisibility(View.GONE);
+                                tv_noHistory.setText("orders from you");
                             }
                             //create the adapter
                             productAdapter = new ProductAdapter(getContext(), 0, 0, orders);
@@ -253,7 +253,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
                                 tv_noHistory.setText("No \nItems");
                                 tv_noHistory.setVisibility(View.VISIBLE);
                             } else {
-                                tv_noHistory.setVisibility(View.GONE);
+                                tv_noHistory.setText("your products");
                             }
                             //create the adapter
                             productAdapter = new ProductAdapter(getContext(), 0, 0, uploadedProducts);
@@ -291,7 +291,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         if (((Partner) generalConnectedPerson).getHistory().size() == 0) {
             tv_noHistory.setVisibility(View.VISIBLE);
         } else {
-            tv_noHistory.setVisibility(View.GONE);
+            tv_noHistory.setText("your history");
         }
         //create the adapter
         productAdapter = new ProductAdapter(getContext(), 0, 0, ((Partner) generalConnectedPerson).getHistory());
@@ -560,7 +560,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
                 Boolean validInfo = str_password.length() >= 6 && isValidEmailAddress(str_email) && !str_email.equals("") && !str_password.equals("");
                 if (validInfo) {   //info is valid
 
-                    logIn(str_email, str_password);
+                    logIn(str_email, str_password,builder);
                 }
             }
         });
@@ -635,7 +635,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
     }
 
     // הפעולה מחברת את המשתמש בעזרת אימייל וסיסמא שהיא מקבלת מהדיאלוג
-    private void logIn(String str_email, String str_password) {
+    private void logIn(String str_email, String str_password, Dialog builder) {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -650,6 +650,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
                             Toast.makeText(getActivity(), "logged in.", Toast.LENGTH_SHORT).show();
                             setVisibility();
                             setPerson();
+                            builder.dismiss();
 
                         } else {
                             // If sign in fails, display a message to the user.

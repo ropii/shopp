@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:text="DISCONNECT"
         android:textSize="30dp"
+        android:textColor="#6830CA"
         android:id="@+id/tv_signUp_title"
         android:layout_margin="30dp"
         />
@@ -17,17 +18,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
+
         android:layout_margin="10dp">
         <Button
             android:layout_width="110dp"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             android:id="@+id/btn_cancel"
             android:text="cancel"
+            android:background="@drawable/button_shape"
             android:layout_marginRight="20dp"
             />
         <Button
             android:layout_width="110dp"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
+            android:background="@drawable/button_shape"
             android:id="@+id/btn_disconnect"
             android:text="sign out"
             />

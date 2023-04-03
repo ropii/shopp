@@ -4,6 +4,7 @@ import static com.example.shop.functions.Functions.generalConnectedPerson;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.example.shop.activities.AfterBuyActivity;
 import com.example.shop.adapters.CartAdapter;
 import com.example.shop.functions.Functions;
 import com.example.shop.functions.OnProductClick;
@@ -278,7 +280,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
                         });
             } else { // can get her because if the cart is empty the user cant see the button
                 Toast.makeText(getContext(), "cart is empty", Toast.LENGTH_SHORT).show();
-
+                thanks();
             }
         }
     }
@@ -318,9 +320,13 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         return Date.getCurrentDate();
     }
 
-    // open a thank you dialog after buying
+    // open a thank you activity after buying
     private void thanks() {
-        Dialog builder = new Dialog(getContext());
+        Intent intent = new Intent(getContext(), AfterBuyActivity.class);
+        startActivity(intent);
+
+
+        /*Dialog builder = new Dialog(getContext());
         builder.setContentView(R.layout.dialog_after_buying);
         builder.setCancelable(true);
         VideoView videoView = builder.findViewById(R.id.videoView_afterBuying);
@@ -335,7 +341,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         });
 
         builder.create();
-        builder.show();
+        builder.show();*/
 
 
     }

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="No History"
-        android:textSize="65dp"
+        android:textSize="40dp"
         android:textAlignment="center"
         android:gravity="center"
         android:id="@+id/tv_noHistory"

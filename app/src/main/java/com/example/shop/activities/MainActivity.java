@@ -7,6 +7,7 @@ import static com.example.shop.functions.Functions.generalConnectedPerson;
 import static com.example.shop.functions.Functions.returnConnectedPerson;
 import static com.example.shop.functions.Functions.setPerson;
 
+import android.animation.Animator;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
@@ -24,10 +25,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -65,12 +68,13 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
     ImageButton btn_musicOf, btn_musicOn;
     Boolean boolean_music;
     Button btn_confirm, btn_reset;
+    Drawable currten_drawable;
     public static String product_name = "",product_category = "";
     public static int product_limit_price = Integer.MAX_VALUE;
     EditText et_priceLimit, et_productSearch,et_categorySearch;
     Intent serviceIntent;
     NetworkChangeReceiver networkChangeReceiver;
-
+    FrameLayout fragment_container_thing;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +90,8 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);//
         drawerLayout.addDrawerListener(actionBarDrawerToggle);//
         actionBarDrawerToggle.syncState();//
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // display drawer icon
+        currten_drawable=ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_product, null);
         btn_confirm = findViewById(R.id.btn_confirm);
         btn_confirm.setOnClickListener(this);
         et_priceLimit = findViewById(R.id.et_priceLimit);
@@ -93,7 +99,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         et_productSearch = findViewById(R.id.et_productSearch);
         btn_reset = findViewById(R.id.btn_reset);
         btn_reset.setOnClickListener(this);
-
+        fragment_container_thing = findViewById(R.id.fragment_container);
         /*
         btn_musicOf = findViewById(R.id.btn_musicOf);
         btn_musicOf = findViewById(R.id.btn_musicOf);
@@ -114,24 +120,31 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
             // הפעולה בודקת האם לחצו על בר הניווט ומעבירה פרגמאנט בהתאם לכך
             @Override
             public void onItemSelected(int i) {
+
                 Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_white, null);
                 Drawable drawable2 = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_account, null);
                 Drawable drawable3 = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_product, null);
+                Drawable drawable4 = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_cart, null);
+                Drawable drawable5 = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_yellow, null);
+
                 setPerson();
                 Fragment fragment = null;
                 switch (i) {
                     case R.id.menu_about:
                         fragment = new AboutFragment();
-                        drawerLayout.setBackground(drawable);
+                        drawerLayout.setBackground(currten_drawable);
+                        currten_drawable = drawable;
+
                         break;
                     case R.id.menu_products:
                         fragment = new ProductsFragment();
-                        drawerLayout.setBackground(drawable3);
+                        drawerLayout.setBackground(currten_drawable);
+                        currten_drawable = drawable3;
                         break;
                     case R.id.menu_accSettings:
                         fragment = new AccountFragment();
-                        drawerLayout.setBackground(drawable2);
-
+                        drawerLayout.setBackground(currten_drawable);
+                        currten_drawable = drawable2;
                         break;
                     case R.id.menu_cart:
                         if (generalConnectedPerson == null) {
@@ -139,8 +152,9 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
 
                         } else {
                             fragment = new CartFragment();
-                            drawerLayout.setBackground(drawable);
-                        }
+                            drawerLayout.setBackground(currten_drawable);
+                            currten_drawable = drawable4;                        }
+
                         break;
                     case R.id.menu_upload:
                         if (generalConnectedPerson == null || !(generalConnectedPerson instanceof Partner)) {
@@ -154,20 +168,34 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
                             }
                         } else {
                             fragment = new UploadItemFragment();
-                            drawerLayout.setBackground(drawable);
+                            drawerLayout.setBackground(currten_drawable);
+                            currten_drawable = drawable5;
+                            // drawerLayout.setBackground(drawable);
                         }
                         break;
                 }
                 if (fragment != null) {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+                    anim();
                     ft.replace(R.id.fragment_container, fragment).commit();
-
                 }
             }
         });
     }
 
+    public void anim(){
+        int x = fragment_container_thing.getRight();
+        int y = fragment_container_thing.getBottom();
+
+        int startRadius = 0;
+        int endRadius = (int) Math.hypot(fragment_container_thing.getWidth(), fragment_container_thing.getHeight());
+
+        Animator anim = ViewAnimationUtils.createCircularReveal(fragment_container_thing, x, y, startRadius, endRadius);
+        anim.setDuration(600);
+        fragment_container_thing.setVisibility(View.VISIBLE);
+        anim.start();
+
+    }
 
     @Override
     public void onClick(View view) {
@@ -255,6 +283,8 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
+                        chipNavigationBar.setItemSelected(R.id.menu_products, true);
+
                     }
                 });
         unauthorizedAccessDialog.show();
@@ -271,4 +301,13 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         product_category="";
     }
 
+    // drawer when the icon is clicked
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

@@ -6,6 +6,7 @@
     android:orientation="vertical"
     >
     <TextView
+        android:textColor="#6830CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SIGN UP"
@@ -17,19 +18,30 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint="first name:"
+        android:layout_marginBottom="6.5dp"
+        android:background="@drawable/edit_text_shape"
+        android:padding="5dp"
         android:id="@+id/et_fistName"
         />
     <EditText
         android:layout_width="200dp"
+        android:background="@drawable/edit_text_shape"
+        android:padding="5dp"
         android:layout_height="wrap_content"
         android:hint="last name:"
+        android:layout_marginBottom="6.5dp"
+
         android:id="@+id/et_lastName"
         />
     <EditText
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint="email:"
+        android:background="@drawable/edit_text_shape"
+        android:padding="5dp"
         android:inputType="textWebEmailAddress"
+        android:layout_marginBottom="6.5dp"
+
         android:id="@+id/et_email"
         />
     <EditText
@@ -37,6 +49,10 @@
         android:layout_height="wrap_content"
         android:hint="password:"
         android:id="@+id/et_password"
+        android:background="@drawable/edit_text_shape"
+        android:padding="5dp"
+        android:layout_marginBottom="6.5dp"
+
         android:inputType="textPassword"
         />
     <LinearLayout
@@ -46,14 +62,16 @@
         android:layout_margin="10dp">
         <Button
             android:layout_width="110dp"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             android:id="@+id/btn_cancel"
             android:text="cancel"
             android:layout_marginRight="20dp"
+            android:background="@drawable/button_shape"
             />
         <Button
             android:layout_width="110dp"
-            android:layout_height="60dp"
+            android:background="@drawable/button_shape"
+            android:layout_height="55dp"
             android:id="@+id/btn_signUp"
             android:text="Sign Up"
             />

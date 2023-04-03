@@ -60,16 +60,18 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/white"
+        android:background="@drawable/gradient_filter"
         android:gravity="center"
+
         android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30dp"
+            android:textSize="25dp"
             android:gravity="center"
+            android:textColor="@color/black"
             android:layout_marginBottom="10dp"
-            android:text="PRICE FILTER"/>
+            android:text="PRODUCT FILTER"/>
 
         <EditText
             android:id="@+id/et_productSearch"
@@ -109,22 +111,22 @@
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/darker_gray" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_confirm"
             android:layout_width="170dp"
 
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:background="@drawable/rounded_button"
+            android:background="@drawable/button_shape_second"
             android:text="Confirm"
             android:textColor="@color/black" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_reset"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:background="@drawable/rounded_button"
+            android:background="@drawable/button_shape_second"
             android:text="Reset"
             android:textColor="@android:color/black" />
 

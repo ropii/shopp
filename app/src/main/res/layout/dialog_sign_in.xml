@@ -10,11 +10,14 @@
         android:layout_height="wrap_content"
         android:text="LOG IN"
         android:textSize="30dp"
+        android:textColor="#6830CA"
         android:id="@+id/tv_signUp_title"
         android:layout_margin="30dp"
         />
     <EditText
         android:layout_width="221dp"
+        android:background="@drawable/edit_text_shape"
+        android:padding="5dp"
         android:layout_height="wrap_content"
         android:hint="email:"
         android:inputType="textWebEmailAddress"
@@ -22,8 +25,12 @@
         />
     <EditText
         android:layout_width="221dp"
+        android:layout_marginTop="8dp"
         android:layout_height="wrap_content"
         android:hint="password:"
+        android:background="@drawable/edit_text_shape"
+        android:padding="5dp"
+
         android:id="@+id/et_password"
         android:inputType="textPassword"
         />
@@ -32,17 +39,20 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_margin="10dp">
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:layout_width="110dp"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             android:id="@+id/btn_cancel"
             android:text="cancel"
+            android:background="@drawable/button_shape"
             android:layout_marginRight="20dp"
             />
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:layout_width="110dp"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             android:id="@+id/btn_logIn"
+            android:background="@drawable/button_shape"
+
             android:text="log in"
             />
 

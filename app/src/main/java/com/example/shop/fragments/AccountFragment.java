@@ -472,8 +472,9 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
                                         }
                                     });
                         }
-
+                        generalConnectedPerson=newPartner;
                         setPerson();
+                        setVisibility();
                         builder.cancel();
                         Toast.makeText(getContext(), "info saved", Toast.LENGTH_LONG).show();
 
@@ -699,9 +700,14 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
             btn_signIn_acc.setVisibility(View.GONE);
             btn_signOut_acc.setVisibility(View.VISIBLE);
             btn_AccountSettings_acc.setVisibility(View.VISIBLE);
+            if (generalConnectedPerson instanceof Partner){
             btn_history_acc.setVisibility(View.VISIBLE);
             btn_items_acc.setVisibility(View.VISIBLE);
-            btn_orders_acc.setVisibility(View.VISIBLE);
+            btn_orders_acc.setVisibility(View.VISIBLE);}
+            else {
+                btn_history_acc.setVisibility(View.GONE);
+                btn_items_acc.setVisibility(View.GONE);
+                btn_orders_acc.setVisibility(View.GONE);}
 
         } else {
             btn_signUp_acc.setVisibility(View.VISIBLE);

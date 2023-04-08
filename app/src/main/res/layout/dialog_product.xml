@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/gradient_pink"
     android:padding="10dp"
+    android:background="#196F81"
     android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
@@ -32,7 +32,7 @@
         android:textColor="@color/black"
         android:textStyle="bold"
         android:textAllCaps="true"
-
+        android:fontFamily="@font/four"
         />
     <TextView
         android:layout_width="200dp"
@@ -41,6 +41,8 @@
         android:id="@+id/tv_category"
         android:textColor="@color/black"
         android:textStyle="bold"
+        android:fontFamily="@font/two"
+
         />
     <TextView
         android:layout_width="200dp"
@@ -48,6 +50,8 @@
         android:text="description"
         android:id="@+id/tv_description"
         android:textColor="#000000"
+        android:fontFamily="@font/two"
+
         />
     <TextView
         android:layout_width="200dp"
@@ -55,6 +59,8 @@
         android:textAlignment="textEnd"
         android:id="@+id/tv_price"
         android:text="price"
+        android:fontFamily="@font/two"
+
         android:textColor="#000000"
         />
     <TextView
@@ -64,6 +70,8 @@
         android:id="@+id/tv_zip"
         android:text="buyers zip- 888888888888"
         android:textColor="#000000"
+        android:fontFamily="@font/two"
+
         />
 
         <TextView
@@ -73,6 +81,8 @@
             android:id="@+id/tv_purchaseDate"
             android:text="purchaseDate"
             android:textColor="#000000"
+            android:fontFamily="@font/two"
+
             />
 
         <TextView
@@ -82,21 +92,24 @@
             android:id="@+id/tv_uploadDate"
             android:text="uploadDate"
             android:textColor="#000000"
+            android:fontFamily="@font/two"
             />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_marginTop="13dp"
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_productDialog"
-        android:background="@drawable/rounded_button"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:background="@drawable/rounded_button"
 
         />
-    <Button
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_contact"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Contact"
+        android:textColor="@color/black"
         android:drawableRight="@drawable/ic_baseline_email_24"
         android:background="@drawable/rounded_button"
         android:layout_marginTop="13dp" />

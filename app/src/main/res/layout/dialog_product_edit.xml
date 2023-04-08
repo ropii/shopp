@@ -66,8 +66,8 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
         android:columnCount="2">
-    <Button
-        android:layout_width="130dp"
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="145dp"
         android:layout_marginTop="13dp"
         android:id="@+id/btn_save"
         android:text="save"
@@ -77,8 +77,8 @@
         android:drawableRight="@drawable/ic_baseline_save_as_24"
 
         />
-    <Button
-        android:layout_width="130dp"
+        <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="145dp"
         android:layout_marginTop="13dp"
         android:id="@+id/btn_remove"
         android:text="remove"

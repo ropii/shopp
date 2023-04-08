@@ -83,6 +83,7 @@
             android:inputType="text"
             android:padding="8dp"
             android:textAlignment="center"
+            android:background="@drawable/edit_text_shape2"
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/darker_gray" />
         <EditText
@@ -96,6 +97,7 @@
             android:padding="8dp"
             android:textAlignment="center"
             android:textColor="@android:color/black"
+            android:background="@drawable/edit_text_shape2"
             android:textColorHint="@android:color/darker_gray" />
 
         <EditText
@@ -106,6 +108,7 @@
             android:layout_marginBottom="16dp"
             android:hint="Price limit"
             android:inputType="number"
+            android:background="@drawable/edit_text_shape2"
             android:padding="8dp"
             android:textAlignment="center"
             android:textColor="@android:color/black"
@@ -118,7 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:background="@drawable/button_shape_second"
-            android:text="Confirm"
+            android:text="Search"
             android:textColor="@color/black" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -130,16 +133,6 @@
             android:text="Reset"
             android:textColor="@android:color/black" />
 
-        <!--<ImageButton
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/btn_musicOn"
-            android:src="@drawable/ic_baseline_music_note_24"/>
-        <ImageButton
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/btn_musicOf"
-            android:src="@drawable/ic_baseline_music_off_24"/>-->
 
     </LinearLayout>
 

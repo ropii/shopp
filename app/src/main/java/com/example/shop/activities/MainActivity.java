@@ -65,16 +65,17 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
 
     public DrawerLayout drawerLayout;//
     public ActionBarDrawerToggle actionBarDrawerToggle;//
-    ImageButton btn_musicOf, btn_musicOn;
-    Boolean boolean_music;
     Button btn_confirm, btn_reset;
     Drawable currten_drawable;
-    public static String product_name = "",product_category = "";
-    public static int product_limit_price = Integer.MAX_VALUE;
-    EditText et_priceLimit, et_productSearch,et_categorySearch;
+    public static String product_name, product_category;
+    public static int product_limit_price;
+    EditText et_priceLimit, et_productSearch, et_categorySearch;
     Intent serviceIntent;
     NetworkChangeReceiver networkChangeReceiver;
     FrameLayout fragment_container_thing;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,18 +86,27 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         serviceIntent = new Intent(this, NotificationService.class);
         stopService(serviceIntent);
 
-
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
         drawerLayout = findViewById(R.id.my_drawer_layout);//
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);//
         drawerLayout.addDrawerListener(actionBarDrawerToggle);//
         actionBarDrawerToggle.syncState();//
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // display drawer icon
-        currten_drawable=ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_product, null);
+        currten_drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_product, null);
         btn_confirm = findViewById(R.id.btn_confirm);
         btn_confirm.setOnClickListener(this);
         et_priceLimit = findViewById(R.id.et_priceLimit);
         et_categorySearch = findViewById(R.id.et_categorySearch);
         et_productSearch = findViewById(R.id.et_productSearch);
+        product_name = sharedPreferences.getString("product_name", "");
+        product_category = sharedPreferences.getString("product_category", "");
+        product_limit_price = sharedPreferences.getInt("product_price", Integer.MAX_VALUE);
+        et_productSearch.setText(product_name);
+        et_categorySearch.setText(product_category);
+        if (product_limit_price != Integer.MAX_VALUE) {
+            et_priceLimit.setText(product_limit_price+"");
+        }
         btn_reset = findViewById(R.id.btn_reset);
         btn_reset.setOnClickListener(this);
         fragment_container_thing = findViewById(R.id.fragment_container);
@@ -107,7 +117,6 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         btn_musicOn.setOnClickListener(this);
         btn_musicOf.setVisibility(View.GONE);
         btn_musicOn.setVisibility(View.GONE);*/
-
 
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductsFragment()).commit();
@@ -153,7 +162,8 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
                         } else {
                             fragment = new CartFragment();
                             drawerLayout.setBackground(currten_drawable);
-                            currten_drawable = drawable4;                        }
+                            currten_drawable = drawable4;
+                        }
 
                         break;
                     case R.id.menu_upload:
@@ -183,7 +193,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         });
     }
 
-    public void anim(){
+    public void anim() {
         int x = fragment_container_thing.getRight();
         int y = fragment_container_thing.getBottom();
 
@@ -215,10 +225,12 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
                 product_category = et_categorySearch.getText().toString().trim();
                 if (!price.equals("")) {
                     product_limit_price = Integer.parseInt(price);
+
                 }
                 if (price.equals("")) {
                     product_limit_price = Integer.MAX_VALUE;
                 }
+                setInfoSp();
                 handleFilter();
             } else {
                 et_priceLimit.setError("price must be less than 1M");
@@ -228,17 +240,26 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
 
     }
 
+    // the function save the filters in the SP
+    public void setInfoSp(){
+        editor.putString("product_name", product_name);
+        editor.putString("product_category", product_category);
+        editor.putInt("product_price", product_limit_price);
+        editor.apply();
+
+    }
+
     // this function reload the product fragment base on the selected item in the NAV bar
-    public void handleFilter(){
-        if (chipNavigationBar.getSelectedItemId() == R.id.menu_products){  // already in the product fragment
+    public void handleFilter() {
+        if (chipNavigationBar.getSelectedItemId() == R.id.menu_products) {  // already in the product fragment
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_container, new ProductsFragment()).commit();
-        }
-        else{ // not in the product fragment
+        } else { // not in the product fragment
             chipNavigationBar.setItemSelected(R.id.menu_products, true);
         }
 
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -292,13 +313,14 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
 
 
     // reset the filter params so all the products will appear.
-    public void resetFilterParams(){
+    public void resetFilterParams() {
         et_productSearch.setText("");
         et_priceLimit.setText("");
         et_categorySearch.setText("");
         product_limit_price = Integer.MAX_VALUE;
         product_name = "";
-        product_category="";
+        product_category = "";
+        setInfoSp();
     }
 
     // drawer when the icon is clicked

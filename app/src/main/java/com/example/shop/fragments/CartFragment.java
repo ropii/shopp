@@ -239,9 +239,8 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
 
     //remove the product from the cart
     private void remove(Product selectedProductInListView) {
-        cartAl.remove(selectedProductInListView);
-        Functions.generalConnectedPerson.setCart(cartAl);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Functions.generalConnectedPerson.removeFromCart(selectedProductInListView);
+        cartAl= Functions.generalConnectedPerson.getCart();
         db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(Functions.generalConnectedPerson);
         createArLs();
 

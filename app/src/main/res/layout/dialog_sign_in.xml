@@ -42,6 +42,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="110dp"
             android:layout_height="55dp"
+            android:textColor="@color/white"
             android:id="@+id/btn_cancel"
             android:text="cancel"
             android:background="@drawable/button_shape"
@@ -52,7 +53,7 @@
             android:layout_height="55dp"
             android:id="@+id/btn_logIn"
             android:background="@drawable/button_shape"
-
+            android:textColor="@color/white"
             android:text="log in"
             />
 

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:background="@drawable/gradient_cart"
+    android:background="@drawable/gradient_pink"
     android:orientation="vertical">
 
     <TextView

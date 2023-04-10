@@ -21,16 +21,8 @@ public class Partner extends Person {
     int zip;
     private ArrayList<Product> history= new ArrayList<>();
     private ArrayList<Product> items = new ArrayList<>();
-    private int money=0;
-    HashMap<String, String> orders = new HashMap<String, String>();
 
-    public HashMap<String, String> getOrders() {
-        return orders;
-    }
 
-    public void setOrders(HashMap<String, String> orders) {
-        this.orders = orders;
-    }
 
     public Partner(String firstName, String lastName, String email, String password, CreditCard card, int zip) {
         super(firstName, lastName, email, password);
@@ -50,9 +42,7 @@ public class Partner extends Person {
 
     }
 
-    public void addToOrders(String productId, String buyerEmail){
-        this.orders.put(productId,buyerEmail);
-    }
+
     public CreditCard getCard() {
         return card;
     }
@@ -83,12 +73,6 @@ public class Partner extends Person {
     }
     public void setItems(ArrayList<Product> items) {
         this.items = items;
-    }
-    public int getMoney() {
-        return money;
-    }
-    public void setMoney(int money) {
-        this.money = money;
     }
 
     public void removeItem(Product product) {

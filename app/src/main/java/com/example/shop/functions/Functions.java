@@ -80,8 +80,8 @@ public class Functions {
             docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    Log.d("user_data", ""+documentSnapshot.get("money"));
-                    if (documentSnapshot.get("money")==null){ // במקרה והמשתמש לא הוסיף פרטים נוספים
+                    Log.d("user_data", ""+documentSnapshot.get("zip"));
+                    if (documentSnapshot.get("zip")==null){ // במקרה והמשתמש לא הוסיף פרטים נוספים
                         Functions.generalConnectedPerson = documentSnapshot.toObject(Person.class);}
                     else {// במקרה והמשתמש כן הוסיף פרטים נוספים
                         Functions.generalConnectedPerson = documentSnapshot.toObject(Partner.class);
@@ -154,9 +154,7 @@ public class Functions {
         Partner b2 = new Partner(p2, card, 234);
         Person pArr[] = new Person[]{p2, b1};
         Object tr = new Person("name", "family", "gmail", "pass");
-        if (tr.getClass() == Partner.class) {
-            ((Partner) tr).getOrders();
-        }
+
 
 
     }

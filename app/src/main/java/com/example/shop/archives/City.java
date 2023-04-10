@@ -1,4 +1,4 @@
-package com.example.shop.objects;
+package com.example.shop.archives;
 
 import java.util.List;
 import java.util.Objects;

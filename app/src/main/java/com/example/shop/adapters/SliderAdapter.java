@@ -14,7 +14,7 @@ import androidx.viewpager.widget.PagerAdapter;
 
 import com.example.shop.R;
 
-public class SliderAdapter extends PagerAdapter implements View.OnClickListener {
+public class SliderAdapter extends PagerAdapter{
     Context context;
     LayoutInflater layoutInflater;
     public SliderAdapter(Context context)
@@ -73,8 +73,6 @@ public class SliderAdapter extends PagerAdapter implements View.OnClickListener 
          arrowLeft = view.findViewById(R.id.arrowLeft);
          arrowRight = view.findViewById(R.id.arrowRight);
 
-        arrowLeft.setOnClickListener(this);
-        arrowRight.setOnClickListener(this);
 
         slideImageView.setImageResource(slide_images[position]);
         slideHeading.setText(slide_headings[position]);
@@ -111,13 +109,5 @@ public class SliderAdapter extends PagerAdapter implements View.OnClickListener 
         container.removeView(slideLayout);
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view==arrowLeft){
 
-        }
-        if (view==arrowRight){
-
-        }
-    }
 }

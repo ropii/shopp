@@ -121,8 +121,4 @@ public class AboutFragment extends Fragment {
         }
     };
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 }

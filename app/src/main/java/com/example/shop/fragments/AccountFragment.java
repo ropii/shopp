@@ -720,10 +720,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 
 
     // onItemClick for the history()

@@ -413,8 +413,5 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
         return new Product(str_name.trim(), str_category.trim(), imgUrl, Integer.parseInt(str_price), productId, str_description, Functions.generalConnectedPerson.getEmail());
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
+
 }

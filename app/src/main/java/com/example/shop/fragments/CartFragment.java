@@ -137,7 +137,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
     // update the cart based on the products i got earlier
-    public void updateCart(){
+    public void updateCart() {
         cartAl = Functions.generalConnectedPerson.getCart();
         for (int i = 0; i < allProducts.size(); i++) {
             for (int j = 0; j < cartAl.size(); j++) {
@@ -158,7 +158,8 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
             }
         });
     }
-        public void loadCartFromFB(ProgressDialog progressDialog) {
+
+    public void loadCartFromFB(ProgressDialog progressDialog) {
 
         db.collection("products")
                 .get()
@@ -170,8 +171,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
                                 Product temp = document.toObject(Product.class);
                                 allProducts.add(temp);
                             }
-                        }
-                        else {
+                        } else {
                             Log.d("aaccvv", "Error getting documents: ", task.getException());
                         }
                         // update the cart
@@ -202,7 +202,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Product selectedProductInListView = cartAdapter.getItem(i);
-        dialog_product = OnProductClick.productClicked(selectedProductInListView,getContext());
+        dialog_product = OnProductClick.productClicked(selectedProductInListView, getContext());
         setDialogButtons(selectedProductInListView, dialog_product);
     }
 
@@ -211,8 +211,8 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
     private void setDialogButtons(Product selectedProductInListView, Dialog dialog_product) {
         Button btn_productDialog = dialog_product.findViewById(R.id.btn_productDialog);
         Button btn_contact = dialog_product.findViewById(R.id.btn_contact);
-            setContactButton(selectedProductInListView, btn_contact);
-            removeFromCartButton(selectedProductInListView, btn_productDialog, dialog_product);
+        setContactButton(selectedProductInListView, btn_contact);
+        removeFromCartButton(selectedProductInListView, btn_productDialog, dialog_product);
     }
 
     private void setContactButton(Product selectedProductInListView, Button btn_contact) {
@@ -240,7 +240,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
     //remove the product from the cart
     private void remove(Product selectedProductInListView) {
         Functions.generalConnectedPerson.removeFromCart(selectedProductInListView);
-        cartAl= Functions.generalConnectedPerson.getCart();
+        cartAl = Functions.generalConnectedPerson.getCart();
         db.collection("users").document(Functions.generalConnectedPerson.getEmail()).set(Functions.generalConnectedPerson);
         createArLs();
 
@@ -288,17 +288,18 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         for (int i = 0; i < cartAl.size(); i++) {
             if (cartAl.get(i).isEquals(temp)) {
                 db.collection("products").document(temp.getProductId()).delete();
-                temp.setPurchaseDate(createOrderDate());
+                temp.setPurchaseDate(Date.getCurrentDate());
                 temp.setBuyer_email(Functions.generalConnectedPerson.getEmail());
-                temp.setBuyer_zip(((Partner)Functions.generalConnectedPerson).getZip());
+                temp.setBuyer_zip(((Partner) Functions.generalConnectedPerson).getZip());
                 ((Partner) Functions.generalConnectedPerson).addsToHistory(temp);
                 updateSeller(temp);
             }
         }
     }
+
     //add the product that have sold to a new document in the fire-base
     // (i don't add it the seller because of the onSuccess and onComplete take a lot of time)
-    private void updateSeller(Product product){
+    private void updateSeller(Product product) {
         db.collection("soldProducts").document(product.getProductId()).set(product);
 /*   add the order
                 db.collection("users").document(temp.getUploader_email())
@@ -314,10 +315,6 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
 */
     }
 
-    //create the order date
-    public Date createOrderDate(){
-        return Date.getCurrentDate();
-    }
 
     // open a thank you activity after buying
     private void thanks() {

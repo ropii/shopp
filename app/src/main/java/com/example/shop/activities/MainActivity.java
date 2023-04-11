@@ -8,11 +8,6 @@ import static com.example.shop.functions.Functions.returnConnectedPerson;
 import static com.example.shop.functions.Functions.setPerson;
 
 import android.animation.Animator;
-import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,19 +15,13 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -41,7 +30,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.shop.functions.Functions;
 import com.example.shop.functions.NetworkChangeReceiver;
 import com.example.shop.functions.NotificationService;
 import com.example.shop.objects.Partner;
@@ -60,13 +48,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class MainActivity extends BasicActivity implements View.OnClickListener {
     public static Person p = null;
-    TextView tv;
     public static ChipNavigationBar chipNavigationBar;
 
     public DrawerLayout drawerLayout;//
     public ActionBarDrawerToggle actionBarDrawerToggle;//
     Button btn_confirm, btn_reset;
-    Drawable currten_drawable;
+    Drawable current_drawable;
     public static String product_name, product_category;
     public static int product_limit_price;
     EditText et_priceLimit, et_productSearch, et_categorySearch;
@@ -93,7 +80,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         drawerLayout.addDrawerListener(actionBarDrawerToggle);//
         actionBarDrawerToggle.syncState();//
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // display drawer icon
-        currten_drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_product, null);
+        current_drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.gradient_product, null);
         btn_confirm = findViewById(R.id.btn_confirm);
         btn_confirm.setOnClickListener(this);
         et_priceLimit = findViewById(R.id.et_priceLimit);
@@ -110,13 +97,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
         btn_reset = findViewById(R.id.btn_reset);
         btn_reset.setOnClickListener(this);
         fragment_container_thing = findViewById(R.id.fragment_container);
-        /*
-        btn_musicOf = findViewById(R.id.btn_musicOf);
-        btn_musicOf = findViewById(R.id.btn_musicOf);
-        btn_musicOf.setOnClickListener(this);
-        btn_musicOn.setOnClickListener(this);
-        btn_musicOf.setVisibility(View.GONE);
-        btn_musicOn.setVisibility(View.GONE);*/
+
 
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductsFragment()).commit();
@@ -141,19 +122,19 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
                 switch (i) {
                     case R.id.menu_about:
                         fragment = new AboutFragment();
-                        drawerLayout.setBackground(currten_drawable);
-                        currten_drawable = drawable;
+                        drawerLayout.setBackground(current_drawable);
+                        current_drawable = drawable;
 
                         break;
                     case R.id.menu_products:
                         fragment = new ProductsFragment();
-                        drawerLayout.setBackground(currten_drawable);
-                        currten_drawable = drawable3;
+                        drawerLayout.setBackground(current_drawable);
+                        current_drawable = drawable3;
                         break;
                     case R.id.menu_accSettings:
                         fragment = new AccountFragment();
-                        drawerLayout.setBackground(currten_drawable);
-                        currten_drawable = drawable2;
+                        drawerLayout.setBackground(current_drawable);
+                        current_drawable = drawable2;
                         break;
                     case R.id.menu_cart:
                         if (generalConnectedPerson == null) {
@@ -161,8 +142,8 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
 
                         } else {
                             fragment = new CartFragment();
-                            drawerLayout.setBackground(currten_drawable);
-                            currten_drawable = drawable4;
+                            drawerLayout.setBackground(current_drawable);
+                            current_drawable = drawable4;
                         }
 
                         break;
@@ -178,8 +159,8 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
                             }
                         } else {
                             fragment = new UploadItemFragment();
-                            drawerLayout.setBackground(currten_drawable);
-                            currten_drawable = drawable5;
+                            drawerLayout.setBackground(current_drawable);
+                            current_drawable = drawable5;
                             // drawerLayout.setBackground(drawable);
                         }
                         break;

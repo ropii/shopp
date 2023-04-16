@@ -651,6 +651,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
                             Toast.makeText(getActivity(), "logged in.", Toast.LENGTH_SHORT).show();
                             setVisibility();
                             setPerson();
+                            setVisibility();
                             builder.dismiss();
 
                         } else {

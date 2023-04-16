@@ -95,6 +95,7 @@ public class Functions {
         else {
             Functions.generalConnectedPerson = null; // מופיע פה NULL למקרה והמשתמש מתנתק
         }
+
     }
     // open the email in order to talk about a product
     public static void openEmail(Product selectedProduct, Context context){

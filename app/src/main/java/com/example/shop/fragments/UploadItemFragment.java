@@ -357,7 +357,7 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    HashMap<String, String> hm = new HashMap<String, String>();
+                    HashMap<String, String> hm = new HashMap<String, String>(); // can be removed
                     hm.put(uuid, downloadUri.toString());
                     db.collection("users").document(Functions.generalConnectedPerson.getEmail())
                             .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

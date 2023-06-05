@@ -279,7 +279,6 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
                         });
             } else { // can get her because if the cart is empty the user cant see the button
                 Toast.makeText(getContext(), "cart is empty", Toast.LENGTH_SHORT).show();
-                thanks();
             }
         }
     }

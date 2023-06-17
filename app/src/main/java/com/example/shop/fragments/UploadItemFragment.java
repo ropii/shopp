@@ -267,14 +267,14 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
                         Intent data = result.getData();
                         if (data != null) {
                             Bitmap photo = (Bitmap) data.getExtras().get("data");
-                            bitM_upload = photo;
-                            iv_img.setImageBitmap(photo);
+                            bitM_upload = photo; // photo to the "bitM_upload" variable
+                            iv_img.setImageBitmap(photo); // set the photo as the image in the ImageView
                         }
                     }
                 }
             });
 
-    // the new on activity result for the gallery
+    // The new onActivityResult for selecting an image from the gallery
     ActivityResultLauncher<Intent> pickImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -282,22 +282,23 @@ public class UploadItemFragment extends Fragment implements View.OnClickListener
                     if (result.getResultCode() == RESULT_OK) {
                         Intent data = result.getData();
                         if (data != null) {
-                            Uri selectedImage = data.getData();
+                            Uri selectedImage = data.getData(); // Get the Uri of the selected image
                             String[] filePathColumn = {MediaStore.Images.Media.DATA};
                             Cursor cursor = getContext().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                             cursor.moveToFirst();
 
                             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                            String picturePath = cursor.getString(columnIndex);
+                            String picturePath = cursor.getString(columnIndex); // Get the file path of the selected image
                             cursor.close();
 
-                            Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-                            bitM_upload = bitmap;
-                            iv_img.setImageBitmap(bitmap);
+                            Bitmap bitmap = BitmapFactory.decodeFile(picturePath); // Decode the image file into a Bitmap
+                            bitM_upload = bitmap; // Assign the selected image to the "bitM_upload" variable
+                            iv_img.setImageBitmap(bitmap); // Set the selected image as the image in the ImageView
                         }
                     }
                 }
             });
+
 
 
     // upload the product to the fire-store and the img to the storage

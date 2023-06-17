@@ -261,10 +261,11 @@ public class MainActivity extends BasicActivity implements View.OnClickListener 
 
 
     public void callNetworkCheck() {
-        networkChangeReceiver = new NetworkChangeReceiver();
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkChangeReceiver, intentFilter);
+        networkChangeReceiver = new NetworkChangeReceiver(); // create an instance of the NetworkChangeReceiver class
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION); // create an IntentFilter to listen for connectivity changes
+        registerReceiver(networkChangeReceiver, intentFilter); // register the NetworkChangeReceiver to receive connectivity change broadcasts
     }
+
 
 
     //dialog that appears when the user try to start a fragment that he doesn't have the premonitions to.

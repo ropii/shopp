@@ -110,7 +110,7 @@ public class Functions {
             Toast.makeText(context, "No email app found on your device", Toast.LENGTH_SHORT).show();
         }
     }
-    // open the email in order to talk about a product aget you bought it
+    // open the email in order to talk about a product that you bought
     public static void openEmailAfterBuy(Product selectedProduct, Context context){
         try {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
@@ -124,7 +124,7 @@ public class Functions {
         }
     }
 
-    // open the email in order to talk about a product aget you bought it
+    // open the email in order to talk about a product that have been bought from you
     public static void openEmailForOrders(Product selectedProduct, Context context){
         try {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
@@ -144,7 +144,7 @@ public class Functions {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    // בדיקת תכנות
+    // בדיקת תכנות לא בשימוש
     public void test() {
         Date date = new Date(12, 2022);
         CreditCard card = new CreditCard(1, 2, date);

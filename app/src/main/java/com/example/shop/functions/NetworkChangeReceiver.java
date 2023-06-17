@@ -9,7 +9,6 @@ import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 
-// תודה לעופרי
 public class NetworkChangeReceiver extends BroadcastReceiver {
     Context mContext;
 

@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 
-// תודה לעופרי
 @SuppressWarnings("ALL")
 public class NetworkUtil {
 

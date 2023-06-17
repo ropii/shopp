@@ -108,6 +108,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         return view;
     }
 
+    //if the user didnt fill the info he can buy
     public void manageBtnBuy() {
         if (generalConnectedPerson instanceof Partner) {
             btn_buy.setVisibility(View.VISIBLE);
@@ -272,7 +273,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
                                     createArLs();
                                     progressDialog.dismiss();
 
-                                    // the thanks dialog:
+                                    // the thanks activity:
                                     thanks();
                                 }
                             }
@@ -283,6 +284,7 @@ public class CartFragment extends Fragment implements AdapterView.OnItemClickLis
         }
     }
 
+    // whit this i update the product + remove in from products to sell + upload it to sold products
     private void checkForMatchingProduct(Product temp) {
         for (int i = 0; i < cartAl.size(); i++) {
             if (cartAl.get(i).isEquals(temp)) {
